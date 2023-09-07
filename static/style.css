@@ -1,0 +1,14 @@
+.icon{
+    width: 70px;
+    height: 70px;
+}
+
+.icon-box:hover{
+    transform: scale(1.01);
+    cursor: pointer;
+}
+
+.icon-box:active{
+    transform: scale(0.99);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
+}

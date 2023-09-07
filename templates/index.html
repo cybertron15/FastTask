@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block task_active %}active{% endblock task_active %}
+{% block body %}
+<div class="container">
+  <form action="/add" method="POST">
+    <div class="mb-3">
+      <label for="task" class="form-label">Task</label>
+      <input type="text" class="form-control" name="task" id="task" required>
+        </div>
+        <div class="mb-3">
+          <label for="decs" class="form-label">Description</label>
+          <input type="text" class="form-control" name="decs" id="decs" required>
+        </div>
+        <div class="mb-3">
+          <label for="decs" class="form-label">Due Date</label>
+          <input type="date" class="form-control" name="dueDate" id="dueDate" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-l">Add Task</button>
+      </form>
+    </div>
+    <div class="container mt-3">
+      <h3>Your Tasks</h3>
+      {% if tasks|length == 0 %}
+      <div class="alert alert-danger" role="alert">
+        No Tasks Found. Please Add your first Task.
+      </div>
+      {% else %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Sr No</th>
+            <th scope="col">Task</th>
+            <th scope="col">Desc</th>
+            <th scope="col">Date Created</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for task in tasks %}
+          <tr>
+            <th scope="row">{{loop.index}}</th>
+            <td>{{task.task}}</td>
+            <td>{{task.desc}}</td>
+            <td>{{task.date_created}}</td>
+            <td class="{{task.color}}">{{task.due_date}}</td>
+            <td>
+              <a href="/update/{{task.id}}"><button type="button" class="btn btn-outline-secondary btn-sm">Update</button></a>
+              <a href="/delete/{{task.id}}"><button type="button" class="btn btn-outline-success btn-sm">Completed</button></a>
+            </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        
+      </div>
+      
+{% endblock body %}
