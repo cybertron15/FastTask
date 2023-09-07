@@ -12,3 +12,18 @@
     transform: scale(0.99);
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.2);
 }
+
+.small-img{
+    width: 20px;
+    height: 20px;
+}
+
+.small-img:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.small-img:active{
+    transform: scale(0.99);
+    filter: drop-shadow(0px 5px 10px rgba(35, 38, 42, 0.4));
+}

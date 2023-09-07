@@ -78,7 +78,6 @@ def add_task():
 @app.route("/add-project", methods=["GET", "POST"])
 def add_project():
     if request.method == "POST":
-        print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
         req_due_date = f"{request.form['dueDate']} {datetime.datetime.now().isoformat().split('T')[1][:-7]}"
         due_date = datetime.datetime.strptime(req_due_date, "%Y-%m-%d %H:%M:%S")
         print(request.form)
@@ -92,6 +91,10 @@ def add_project():
     db.session.commit()
     return redirect("/projects")
 
+        
+@app.route("/viewProject")
+def view_project():
+    return render_template('viewProject.html')
 
 if __name__ == "__main__":
     with app.app_context():
