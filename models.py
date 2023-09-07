@@ -16,3 +16,16 @@ class Tasks(db.Model):
     def __repr__(self):
         """this method is used to represent the class when its printed"""
         return f"{self.id}, {self.task} , {self.desc}, {self.date_created}, {self.due_date}"
+
+class Projects(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    usr_id = db.Column(db.String(200), nullable=False, default="admin")
+    project = db.Column(db.String(200), nullable=False)
+    desc = db.Column(db.String(200), nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=formated_date)
+    due_date = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(15), nullable=False, default="active")
+
+    def __repr__(self):
+        """this method is used to represent the class when its printed"""
+        return f"{self.id}, {self.project} , {self.desc}, {self.date_created}, {self.due_date}"
