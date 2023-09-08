@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request
 from models import db, Tasks, Projects
 import datetime
+from uuid import uuid4
 
 app = Flask(__name__)
 # create the extension
@@ -30,13 +31,11 @@ def contact():
 def show_projects():
     projects = Projects.query.all()
     for project in projects:
-        print((project.due_date - datetime.datetime.now()).days)
         if 0 <= (project.due_date - datetime.datetime.now()).days < 1:
             project.color = "bg-warning-subtle"
         elif (project.due_date - datetime.datetime.now()).days < 0:
             project.color = "bg-danger-subtle"
         project.due_date = datetime.datetime.strftime(project.due_date,"%Y-%m-%d %H:%M:%S").split(' ')[0]
-        print(type(project.status))
     return render_template("project.html", projects=projects)
 
 
@@ -69,7 +68,6 @@ def add_task():
         task = Tasks(
             task=request.form["task"], due_date=due_date, desc=request.form["decs"]
         )
-        print(task)
     db.session.add(task)
     db.session.commit()
     return redirect("/")
@@ -80,8 +78,9 @@ def add_project():
     if request.method == "POST":
         req_due_date = f"{request.form['dueDate']} {datetime.datetime.now().isoformat().split('T')[1][:-7]}"
         due_date = datetime.datetime.strptime(req_due_date, "%Y-%m-%d %H:%M:%S")
-        print(request.form)
+        id = str(uuid4())
         project = Projects(
+            id = id,
             project=request.form["project"],
             due_date=due_date,
             desc=request.form["desc"],
@@ -89,12 +88,22 @@ def add_project():
         )
     db.session.add(project)
     db.session.commit()
+    return redirect(f"/viewProject/{id}")
+
+@app.route("/deleteProj/<string:id>")
+def delete_proj(id):
+    task = Projects.query.filter_by(id=id).first()
+    db.session.delete(task)
+    db.session.commit()
     return redirect("/projects")
 
         
-@app.route("/viewProject")
-def view_project():
-    return render_template('viewProject.html')
+@app.route("/viewProject/<string:id>")
+def view_project(id):
+    project = Projects.query.filter_by(id=id).first()
+    name = project.project
+    due_date = project.due_date.isoformat().split('T')[0]
+    return render_template('viewProject.html',projectName=name,due_date=due_date)
 
 if __name__ == "__main__":
     with app.app_context():

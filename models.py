@@ -18,9 +18,9 @@ class Tasks(db.Model):
         return f"{self.id}, {self.task} , {self.desc}, {self.date_created}, {self.due_date}"
 
 class Projects(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    usr_id = db.Column(db.String(200), nullable=False, default="admin")
-    project = db.Column(db.String(200), nullable=False)
+    id = db.Column(db.String(100),primary_key=True)
+    usr_id = db.Column(db.String(100), nullable=False, default="admin")
+    project = db.Column(db.String(100), nullable=False)
     desc = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=formated_date)
     due_date = db.Column(db.DateTime, nullable=False)

@@ -3,10 +3,10 @@
 {% block body %}
 <div class="container">
     <div class="d-flex justify-content-between">
-        <h3>Project Name</h3>
+        <h3>{{projectName}}</h3>
         <p class="mt-2">Creator: Palash Dhavle</p>
     </div>
-    <h6>Due: 20/09/2023</h6>
+    <h6>Due: {{due_date}}</h6>
     <hr>
 </div>
 <div class="container mt-3">
@@ -58,34 +58,85 @@
         'add-hts': 'hts-c',
         'add-c': 'c-c'
     }
+
+    let status_map = {
+        0: 'hts-c',
+        1: 'woi-c',
+        2: 'c-c'
+    }
+
+    let rev_status_map = {
+        'hts-c': 0,
+        'woi-c': 1,
+        'c-c': 2
+    }
+
+    function create_project_task(unique_id, task_name, target_container, status) {
+        if (task_name) {
+            let card = `<div class="card mb-2" id="card_${unique_id}" status=${status}>
+                        <div class="card-body bg-danger-subtle">
+                            <h5 class="card-title" id="cardName_${unique_id}">${task_name}</h5>
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex gap-1">
+                                    <div><img src="/static/edit.png" class="small-img" alt="" id="edit_${unique_id}"></div>
+                                    <div><img src="/static/trash.png" class="small-img" id="del_${unique_id}" alt=""></div>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        <div><img src="/static/arrow-left.png" id="left_${unique_id}" class="small-img" alt=""></div>
+                                        <div><img src="/static/arrow-right.png" id="right_${unique_id}" class="small-img" alt=""></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+            let node = document.createElement('div')
+            node.innerHTML = card
+            target_container.appendChild(node)
+        }
+    }
+
+    function card_oparations(target_id, action) {
+        console.log(action);
+        let target_card = document.getElementById("card_" + target_id)
+        let card_name = document.getElementById("cardName_" + target_id).innerText
+        let target_status = parseInt(target_card.getAttribute('status'))
+        console.log(target_status);
+        if (action == "left" && target_status > 0) {
+            target_card.remove()
+            target_status -= 1
+            
+            target_card_container = document.getElementById(status_map[target_status])
+            create_project_task(target_id[1], card_name, target_card_container, target_status)
+        }
+        else if (action == "right" && target_status < 2) {
+            target_card.remove()
+            target_status += 1
+            
+            target_card_container = document.getElementById(status_map[target_status])
+            create_project_task(target_id[1], card_name, target_card_container, target_status)
+        }
+        else if (action == "del") {
+            target_card.remove()
+        }
+    }
+
     document.getElementById('main').addEventListener('click', (event) => {
         if (event.target) {
+            // adding new task on click of add
             if (event.target.tagName == "INPUT" && event.target.getAttribute('type') == 'button') {
                 let id = map[event.target.id]
                 let target_container = document.getElementById(id)
                 let task_input = document.getElementById(event.target.id + '-input')
                 let task_name = task_input.value
+                let unique_id = crypto.randomUUID()
+                let status_code = rev_status_map[id]
+                create_project_task(unique_id, task_name, target_container, status_code)
                 task_input.value = ''
-                if (task_name) {
-                    let card = `<div class="card mb-2">
-                        <div class="card-body bg-danger-subtle">
-                            <h5 class="card-title">${task_name}</h5>
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex gap-1">
-                                    <div><img src="/static/edit.png" class="small-img" alt=""></div>
-                                    <div><img src="/static/trash.png" class="small-img" alt=""></div>
-                                    </div>
-                                    <div class="d-flex gap-1">
-                                        <div><img src="/static/arrow-left.png" class="small-img" alt=""></div>
-                                        <div><img src="/static/arrow-right.png" class="small-img" alt=""></div>
-                                        </div>
-                                        </div>
-                                        </div>
-                                        </div>`
-                    let node = document.createElement('div')
-                    node.innerHTML = card
-                    target_container.appendChild(node)
-                }
+            }
+
+            // performing oparations on task depending on the button pressed
+            if (event.target.tagName == "IMG") {
+                let target_id = event.target.id.split('_')
+                card_oparations(target_id[1], target_id[0])
             }
         }
     })
