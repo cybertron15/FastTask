@@ -1,7 +1,8 @@
 from flask import Flask, render_template, redirect, request
-from models import db, Tasks, Projects
+from models import db, Tasks, Projects,Project_tasks
 import datetime
 from uuid import uuid4
+import json
 
 app = Flask(__name__)
 # create the extension
@@ -97,13 +98,38 @@ def delete_proj(id):
     db.session.commit()
     return redirect("/projects")
 
-        
 @app.route("/viewProject/<string:id>")
 def view_project(id):
     project = Projects.query.filter_by(id=id).first()
     name = project.project
     due_date = project.due_date.isoformat().split('T')[0]
-    return render_template('viewProject.html',projectName=name,due_date=due_date)
+    id = project.id
+    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id)
+
+@app.route("/add_Project_Task",methods=["GET", "POST"])
+def add_project_task():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        id = data['task_id']
+        task_name = data['task_name']
+        task_status = data['task_status']
+        project_id = data['project_id']
+        new_task = Project_tasks(id=id,project_id=project_id,task_name=task_name,task_status=task_status)
+        db.session.add(new_task)
+        db.session.commit()
+        return 'ok',200
+
+@app.route("/remove_Project_Task",methods=["GET", "POST"])
+def remove_project_task():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        id = data['id']
+        print(id)
+        task = Project_tasks.query.filter_by(id=id).first()
+        db.session.delete(task)
+        db.session.commit()
+        return 'ok',200
+        
 
 if __name__ == "__main__":
     with app.app_context():

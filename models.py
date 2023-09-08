@@ -29,3 +29,12 @@ class Projects(db.Model):
     def __repr__(self):
         """this method is used to represent the class when its printed"""
         return f"{self.id}, {self.project} , {self.desc}, {self.date_created}, {self.due_date}"
+
+class Project_tasks(db.Model):
+    id = db.Column(db.String(100),primary_key=True)
+    usr_id = db.Column(db.String(100), nullable=False, default="admin")
+    project_id = db.Column(db.String(100),db.ForeignKey('projects.id'),nullable=True)
+    task_name = db.Column(db.String(100), nullable=False)
+    task_status = db.Column(db.String(15), nullable=False, default="active")
+    date_created = db.Column(db.DateTime, nullable=False, default=formated_date)
+    due_date = db.Column(db.DateTime)
