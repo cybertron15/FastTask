@@ -24,6 +24,24 @@
                     </div>
                 </div>
             </div>
+            {% for task in hts_task %}
+            <div class="card mb-2" id="card_{{task.id}}" status={{task.task_status}}>
+                <div class="card-body">
+                    <h5 class="card-title" id="cardName_{{task.id}}">{{task.task_name}}</h5>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex gap-1">
+                            <div><img src="/static/edit.png" class="small-img" alt="" id="edit_{{task.id}}"></div>
+                            <div><img src="/static/trash.png" class="small-img" id="del_{{task.id}}" alt=""></div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <div><img src="/static/arrow-left.png" id="left_{{task.id}}" class="small-img" alt=""></div>
+                            <div><img src="/static/arrow-right.png" id="right_{{task.id}}" class="small-img" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
         <div class="container bg-secondary-subtle rounded-3" id="woi-c">
             <h6 class="fs-5 mt-2">Working on it</h6>
@@ -38,6 +56,24 @@
                     </div>
                 </div>
             </div>
+            {% for task in woi_task %}
+            <div class="card mb-2" id="card_{{task.id}}" status={{task.task_status}}>
+                <div class="card-body">
+                    <h5 class="card-title" id="cardName_{{task.id}}">{{task.task_name}}</h5>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex gap-1">
+                            <div><img src="/static/edit.png" class="small-img" alt="" id="edit_{{task.id}}"></div>
+                            <div><img src="/static/trash.png" class="small-img" id="del_{{task.id}}" alt=""></div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <div><img src="/static/arrow-left.png" id="left_{{task.id}}" class="small-img" alt=""></div>
+                            <div><img src="/static/arrow-right.png" id="right_{{task.id}}" class="small-img" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
         <div class="container bg-secondary-subtle rounded-3" id="c-c">
             <h6 class="fs-5 mt-2">Completed</h6>
@@ -52,6 +88,24 @@
                     </div>
                 </div>
             </div>
+            {% for task in c_task %}
+            <div class="card mb-2" id="card_{{task.id}}" status={{task.task_status}}>
+                <div class="card-body">
+                    <h5 class="card-title" id="cardName_{{task.id}}">{{task.task_name}}</h5>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex gap-1">
+                            <div><img src="/static/edit.png" class="small-img" alt="" id="edit_{{task.id}}"></div>
+                            <div><img src="/static/trash.png" class="small-img" id="del_{{task.id}}" alt=""></div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <div><img src="/static/arrow-left.png" id="left_{{task.id}}" class="small-img" alt=""></div>
+                            <div><img src="/static/arrow-right.png" id="right_{{task.id}}" class="small-img" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -98,39 +152,51 @@
     }
 
     function card_oparations(target_id, action) {
-        console.log(action,target_id);
+        console.log(action, target_id);
         let target_card = document.getElementById("card_" + target_id)
         let card_name = document.getElementById("cardName_" + target_id).innerText
         let target_status = parseInt(target_card.getAttribute('status'))
-        console.log(target_status);
+        const headers = {
+                'Content-Type': 'application/json'
+            }
+        
+        let options={method: 'POST',
+                    headers: headers,}
         if (action == "left" && target_status > 0) {
             target_card.remove()
             target_status -= 1
 
             target_card_container = document.getElementById(status_map[target_status])
-            create_project_task(target_id, card_name, target_card_container, target_status)
+
+            json_data = { 'id': target_id,'status':target_status }
+            options['body'] = JSON.stringify(json_data)
+
+            fetch(`http://127.0.0.1:5001/update_Project_Task`, options)
+                .then((res) => {
+                    create_project_task(target_id, card_name, target_card_container, target_status)
+                })
         }
         else if (action == "right" && target_status < 2) {
             target_card.remove()
             target_status += 1
 
             target_card_container = document.getElementById(status_map[target_status])
-            create_project_task(target_id, card_name, target_card_container, target_status)
+
+            json_data = { 'id': target_id,'status':target_status}
+            options['body'] = JSON.stringify(json_data)
+
+            fetch(`http://127.0.0.1:5001/update_Project_Task`, options)
+                .then((res) => {
+                    create_project_task(target_id, card_name, target_card_container, target_status)
+                })
         }
         else if (action == "del") {
-            json_data = {'id':target_id}
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            const options = {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(json_data) // Convert JSON data to a string
-            };
-                fetch(`http://127.0.0.1:5001/remove_Project_Task`, options)
-                    .then((res) => {
-                        target_card.remove()
-                    })
+            json_data = { 'id': target_id }
+            options['body'] = JSON.stringify(json_data)
+            fetch(`http://127.0.0.1:5001/remove_Project_Task`, options)
+                .then((res) => {
+                    target_card.remove()
+                })
         }
     }
 
@@ -172,10 +238,7 @@
 
             // performing oparations on task depending on the button pressed
             if (event.target.tagName == "IMG") {
-                console.log(event.target.id);
                 let target_id = event.target.id.split('_')
-                console.log("direction button pressed");
-                console.log(target_id);
                 card_oparations(target_id[1], target_id[0])
             }
         }

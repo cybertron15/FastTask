@@ -104,7 +104,10 @@ def view_project(id):
     name = project.project
     due_date = project.due_date.isoformat().split('T')[0]
     id = project.id
-    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id)
+    hts_task = Project_tasks.query.filter_by(project_id = id, task_status = 0)
+    woi_task = Project_tasks.query.filter_by(project_id = id, task_status = 1)
+    c_task = Project_tasks.query.filter_by(project_id = id, task_status = 2)
+    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id,hts_task=hts_task,woi_task=woi_task,c_task=c_task)
 
 @app.route("/add_Project_Task",methods=["GET", "POST"])
 def add_project_task():
@@ -124,9 +127,19 @@ def remove_project_task():
     if request.method == "POST":
         data = json.loads(request.data)
         id = data['id']
-        print(id)
         task = Project_tasks.query.filter_by(id=id).first()
         db.session.delete(task)
+        db.session.commit()
+        return 'ok',200
+
+@app.route("/update_Project_Task",methods=["GET", "POST"])
+def update_project_task():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        id = data['id']
+        task = Project_tasks.query.filter_by(id=id).first()
+        task.task_status = data['status']
+        db.session.add(task)
         db.session.commit()
         return 'ok',200
         
