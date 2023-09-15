@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request,session,url_for
 from models import db, Tasks, Projects,Project_tasks, Users
 import datetime
 from uuid import uuid4
@@ -9,6 +9,7 @@ app = Flask(__name__)
 db = db
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///storage.db"
+app.secret_key = 'test_key'
 db.init_app(app)
 
 
@@ -22,11 +23,16 @@ def home():
             task.color = "text-danger"
     return render_template("index.html", tasks=tasks)
 
+@app.before_request
+def login_check():
+    logged_in = session.get('logged_in')
+    print(logged_in)
+    if not logged_in and request.path != url_for('login',signed_up=0):
+        return redirect(url_for('login',signed_up=0))
 
 @app.route("/contact")
 def contact():
     return "palashdhavle15@gmail.com"
-
 
 @app.route("/projects")
 def show_projects():
@@ -39,14 +45,12 @@ def show_projects():
         project.due_date = datetime.datetime.strftime(project.due_date,"%Y-%m-%d %H:%M:%S").split(' ')[0]
     return render_template("project.html", projects=projects)
 
-
 @app.route("/delete/<int:id>")
 def delete(id):
     task = Tasks.query.filter_by(id=id).first()
     db.session.delete(task)
     db.session.commit()
     return redirect("/")
-
 
 @app.route("/update/<int:id>", methods=["GET", "POST"])
 def update(id):
@@ -60,7 +64,6 @@ def update(id):
     task = Tasks.query.filter_by(id=id).first()
     return render_template("update.html", task=task)
 
-
 @app.route("/add", methods=["GET", "POST"])
 def add_task():
     if request.method == "POST":
@@ -72,7 +75,6 @@ def add_task():
     db.session.add(task)
     db.session.commit()
     return redirect("/")
-
 
 @app.route("/add-project", methods=["GET", "POST"])
 def add_project():
@@ -143,17 +145,19 @@ def update_project_task():
         db.session.commit()
         return 'ok',200
         
-@app.route('/login/<int:singed_up>',methods=["GET", "POST"])
-def login(singed_up):
+@app.route('/login/<int:signed_up>',methods=["GET", "POST"])
+def login(signed_up):
     usr_msg = ''
     if request.method == "POST":
         data = request.form
         user = Users.query.filter_by(usr_email=data['email'],usr_pass=data['password']).first()
         if user:
+            session['user_id'] = user.id
+            session['logged_in'] = True
             return redirect('/')
         else:
             usr_msg = "Login failed!"
-    return render_template('login.html',usr_msg = usr_msg,just_signed_up=singed_up)
+    return render_template('login.html',usr_msg = usr_msg,just_signed_up=signed_up)
 
 @app.route('/signup',methods=["GET", "POST"])
 def signup():
