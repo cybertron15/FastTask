@@ -38,3 +38,9 @@ class Project_tasks(db.Model):
     task_status = db.Column(db.String(15), nullable=False, default="active")
     date_created = db.Column(db.DateTime, nullable=False, default=formated_date)
     due_date = db.Column(db.DateTime)
+
+class Users(db.Model):
+    id = db.Column(db.String(100),primary_key=True)
+    usr_name = db.Column(db.String(100), nullable=False, default="admin")
+    usr_pass = db.Column(db.String(100), nullable=False, default="admin")
+    usr_email = db.Column(db.String(100), nullable=False, default="admin@gmail.com")

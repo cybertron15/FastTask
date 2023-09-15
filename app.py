@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request
-from models import db, Tasks, Projects,Project_tasks
+from models import db, Tasks, Projects,Project_tasks, Users
 import datetime
 from uuid import uuid4
 import json
@@ -143,6 +143,32 @@ def update_project_task():
         db.session.commit()
         return 'ok',200
         
+@app.route('/login/<int:singed_up>',methods=["GET", "POST"])
+def login(singed_up):
+    usr_msg = ''
+    if request.method == "POST":
+        data = request.form
+        user = Users.query.filter_by(usr_email=data['email'],usr_pass=data['password']).first()
+        if user:
+            return redirect('/')
+        else:
+            usr_msg = "Login failed!"
+    return render_template('login.html',usr_msg = usr_msg,just_signed_up=singed_up)
+
+@app.route('/signup',methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        print('land')
+        id = str(uuid4())
+        data = request.form
+        usr_name = data['name']
+        email = data['email']
+        password = data['password']
+        new_usr = Users(id=id,usr_name=usr_name,usr_pass=password,usr_email=email)
+        db.session.add(new_usr)
+        db.session.commit()
+        return redirect('/login/1')
+    return redirect('/login/0')
 
 if __name__ == "__main__":
     with app.app_context():

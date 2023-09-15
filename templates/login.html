@@ -1,25 +1,100 @@
 {% extends 'base.html' %}
 {% block title %}Login{% endblock title %}
 {% block body %}
+<style>
+    .move {
+        transition: transform;
+        transition-duration: 1s;
+        transform: translateX(0);
+    }
+
+    .button {
+        width: 80px;
+    }
+</style>
+{% if just_signed_up %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Your account has been successfully created.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
 <div class="d-flex justify-content-center align-content-center mt-5">
-    <div class="card" style="width: 20rem">
-        <div class="card-body d-flex flex-column">
-            <h1 class="card-title text-center">Login</h1>
-            <form action="/login" method="post">
-                <div class="mt-3">
-                    <label for="email" class="fs-5">Email</label>
-                    <input type="email" class="form-control" name="email" required>
+    <div style="width: 20rem" class="overflow-hidden">
+        <div class="d-flex gap-1 move" style="width: 40rem" id="login-signup-box">
+            <div class="card" style="width: 20rem">
+                <div class="card-body d-flex flex-column bg-primary-subtle">
+                    <h1 class="card-title text-center">Login</h1>
+                    <p class="text-bg-danger text-center">{{usr_msg}}</p>
+                    <hr>
+                    <form action="/login/0" method="post">
+                        <div class="mt-4">
+                            <label for="email" class="fs-5">Email</label>
+                            <input type="text" class="form-control" name="email" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="password" class="fs-5">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center mt-5 mb-2">
+                            <input type="submit" class="btn btn-outline-success button" value="Login">
+                            <input type="button" class="btn btn-outline-primary button" value="Signup"
+                                id="slide_signup">
+                        </div>
+                    </form>
                 </div>
-                <div class="mt-3">
-                    <label for="password" class="fs-5">Password</label>
-                    <input type="password" class="form-control" name="password" required>
+            </div>
+            <div class="card" style="width: 20rem">
+                <div class="card-body d-flex flex-column bg-primary-subtle">
+                    <h1 class="card-title text-center">Sign up</h1>
+                    <form action="/signup" method="post" id="signup-form">
+                        <div class="mt-3">
+                            <label for="name" class="fs-6">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="email" class="fs-6">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="password" class="fs-6">Password</label>
+                            <input type="password" class="form-control" name="password" id="password" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="re-password" class="fs-6">Re-Enter Password</label>
+                            <input type="password" class="form-control" name="re-password" id="password-confirm" required>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center mt-3 mb-2">
+                            <input type="submit" class="btn btn-outline-success button" value="Signup">
+                            <input type="button" class="btn btn-outline-primary button" value="back" id="slide_login">
+                        </div>
+                    </form>
                 </div>
-                <div class="d-flex gap-2 justify-content-center mt-5 mb-2">
-                    <input type="submit" class="btn btn-outline-primary" value="Login">
-                    <input type="button" class="btn btn-outline-primary" value="Signup">
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-{% endblock body %}
+    <script>
+        let box = document.getElementById('login-signup-box')
+        box.addEventListener('click', (event) => {
+            if (event.target && event.target.tagName == "INPUT") {
+                let value = 0
+                if (event.target.id == "slide_signup") {
+                    value = -20
+                    box.style.transform = `translateX(${value}rem)`
+                }
+                if (event.target.id == "slide_login") {
+                    box.style.transform = `translateX(${value}rem)`
+                }
+            }
+        })
+
+        document.getElementById("password-form").addEventListener("submit", function (event) {
+            const password = document.getElementById("password").value;
+            const passwordConfirm = document.getElementById("password-confirm").value;
+
+            if (password !== passwordConfirm) {
+                event.preventDefault(); // Prevent form submission
+                alert("Passwords do not match. Please try again.");
+            }
+        });
+    </script>
+    {% endblock body %}
