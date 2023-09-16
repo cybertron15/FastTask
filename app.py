@@ -12,23 +12,29 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///storage.db"
 app.secret_key = 'test_key'
 db.init_app(app)
 
+whitelist = ['/static/', '/public/','/login/']
 
 @app.route("/")
 def home():
-    tasks = Tasks.query.all()
+    tasks = Tasks.query.filter_by(usr_id = session['user_id']).all()
     for task in tasks:
         if 0 <= (task.due_date - datetime.datetime.now()).days < 1:
             task.color = "text-warning"
         elif (task.due_date - datetime.datetime.now()).days < 0:
             task.color = "text-danger"
+
+        task.date_created = task.date_created.isoformat().split('T')[0]
+        task.due_date = task.due_date.isoformat().split('T')[0]
     return render_template("index.html", tasks=tasks)
 
 @app.before_request
 def login_check():
     logged_in = session.get('logged_in')
-    print(logged_in)
-    if not logged_in and request.path != url_for('login',signed_up=0):
+    path = request.path
+    if not logged_in and path != url_for('login',signed_up=0) and '/static/' not in path:
+        print(path)
         return redirect(url_for('login',signed_up=0))
+    
 
 @app.route("/contact")
 def contact():
@@ -36,7 +42,7 @@ def contact():
 
 @app.route("/projects")
 def show_projects():
-    projects = Projects.query.all()
+    projects = Projects.query.filter_by(usr_id=session['user_id']).all()
     for project in projects:
         if 0 <= (project.due_date - datetime.datetime.now()).days < 1:
             project.color = "bg-warning-subtle"
@@ -70,7 +76,7 @@ def add_task():
         req_due_date = f"{request.form['dueDate']} {datetime.datetime.now().isoformat().split('T')[1][:-7]}"
         due_date = datetime.datetime.strptime(req_due_date, "%Y-%m-%d %H:%M:%S")
         task = Tasks(
-            task=request.form["task"], due_date=due_date, desc=request.form["decs"]
+            task=request.form["task"], due_date=due_date, desc=request.form["decs"],usr_id=session['user_id']
         )
     db.session.add(task)
     db.session.commit()
@@ -87,6 +93,7 @@ def add_project():
             project=request.form["project"],
             due_date=due_date,
             desc=request.form["desc"],
+            usr_id = session['user_id'],
             status=request.form["status"],
         )
     db.session.add(project)
@@ -102,14 +109,18 @@ def delete_proj(id):
 
 @app.route("/viewProject/<string:id>")
 def view_project(id):
-    project = Projects.query.filter_by(id=id).first()
+    project = Projects.query.filter_by(id=id,usr_id=session['user_id']).first()
+    # added for security reason if someone tries to check out other peoples project
+    if not project:
+        return 'You are not allowed to view this project'
+    user_name = Users.query.filter_by(id=session['user_id']).first().usr_name.title()
     name = project.project
     due_date = project.due_date.isoformat().split('T')[0]
     id = project.id
     hts_task = Project_tasks.query.filter_by(project_id = id, task_status = 0)
     woi_task = Project_tasks.query.filter_by(project_id = id, task_status = 1)
     c_task = Project_tasks.query.filter_by(project_id = id, task_status = 2)
-    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id,hts_task=hts_task,woi_task=woi_task,c_task=c_task)
+    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id,hts_task=hts_task,woi_task=woi_task,c_task=c_task,user_name=user_name)
 
 @app.route("/add_Project_Task",methods=["GET", "POST"])
 def add_project_task():
@@ -173,6 +184,11 @@ def signup():
         db.session.commit()
         return redirect('/login/1')
     return redirect('/login/0')
+
+@app.route('/logout',methods=["GET", "POST"])
+def log_out():
+    session.clear()
+    return redirect(url_for('login',signed_up=0))
 
 if __name__ == "__main__":
     with app.app_context():
