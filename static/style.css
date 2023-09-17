@@ -44,6 +44,10 @@ body{
     height: 20px;
 }
 
+.project_icon:hover{
+    transform: scale(1.1);
+}
+
 .theme-color-1 {
     background-color: rgb(59, 144, 213, .15);
 }
@@ -57,10 +61,30 @@ body{
     background-color: rgba(58, 61, 64, 0.15);
 }
 
+.theme-color-4{
+    background-color : rgba(243, 102, 42, 0.15);
+}
+
 .theme-title-4{
     color : rgba(243, 103, 42, 1);
 }
 
+.theme-warning{
+    background-color : rgba(243, 199, 42, 0.258);
+}
+
+.theme-danger{
+    background-color : rgba(243, 42, 42, 0.258);
+}
+
+.theme-button-1{
+    background-color : rgba(243, 102, 42, 0.696);
+}
+
+.theme-button-1:hover{
+    background-color : rgba(243, 102, 42, 0.912);
+    transform: scale(1.1);
+}
 .glass-effect {
     box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
     /* background-color: rgba(255, 255, 255, .15); */

@@ -45,9 +45,9 @@ def show_projects():
     projects = Projects.query.filter_by(usr_id=session['user_id']).all()
     for project in projects:
         if 0 <= (project.due_date - datetime.datetime.now()).days < 1:
-            project.color = "bg-warning-subtle"
+            project.color = "theme-warning"
         elif (project.due_date - datetime.datetime.now()).days < 0:
-            project.color = "bg-danger-subtle"
+            project.color = "theme-danger"
         project.due_date = datetime.datetime.strftime(project.due_date,"%Y-%m-%d %H:%M:%S").split(' ')[0]
     return render_template("project.html", projects=projects)
 
@@ -113,7 +113,7 @@ def view_project(id):
     # added for security reason if someone tries to check out other peoples project
     if not project:
         return 'You are not allowed to view this project'
-    user_name = Users.query.filter_by(id=session['user_id']).first().usr_name.title()
+    user_name = session['user_name'].title()
     name = project.project
     due_date = project.due_date.isoformat().split('T')[0]
     id = project.id
@@ -165,6 +165,7 @@ def login(signed_up):
         if user:
             session['user_id'] = user.id
             session['logged_in'] = True
+            session['user_name'] = user.usr_name
             return redirect('/')
         else:
             usr_msg = "Login failed!"
