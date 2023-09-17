@@ -4,7 +4,13 @@
 {% block body %}
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');
+
+    body {
+        background-image: url(/static/background2.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
 
     .move {
         transition: transform;
@@ -17,9 +23,9 @@
     }
 
     .brand {
-        color: #132FA6;
-        font-family: 'Inter', sans-serif;
-        font-size: 96px;
+        color: #ffffff;
+        font-family: 'Barlow', sans-serif;
+        font-size: 140px;
         font-style: normal;
         font-weight: 400;
         line-height: normal;
@@ -35,95 +41,84 @@
     }
 
     img {
-        width: 631px;
-        height: 442px;
-
+        width: 450px;
+        height: 400px;
     }
 </style>
-<div class="container-fluid h-100">
-    <div class="row h-100">
-        <div class="col-6">
-            <div class="d-flex justify-content-center flex-column h-100">
-                <div>
-                    <div class="brand mt-5 ms-5">
-                        Fast Task
-                    </div>
-                    <div class="sub-title ms-5">
-                        Get things done fast
-                    </div>
-                </div>
-                <div>
-                    <img src="/static/mainimg.png" alt="" class="mt-5 me-5">
+<div class="container-fluid h-100 p-0 overflow-hidden">
+    <video autoplay loop muted plays-inline preload="auto" class="bg-vid">
+        <source src="/static/vid_background.mp4" type="video/mp4">
+    </video>
+    <div class="container theme-color-3 glass-effect mt-5 overflow-auto" style="height: 90%;">
+        <div class="row w-100 h-100">
+            <div class="col text-center opacity-75">
+                <div class="d-flex align-items-center justify-content-center h-100">
+                    <img src="/static/brand3.png" alt="" class="">
                 </div>
             </div>
-        </div>
-        <div class="col-6 theme-color-1">
-            {% if just_signed_up %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                Your account has been successfully created.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endif %}
-            <div class="d-flex justify-content-center align-items-center h-100">
-                <div style="width: 20rem" class="overflow-hidden">
-                    <div class="d-flex gap-1 move" style="width: 40rem" id="login-signup-box">
-                        <div class="card" style="width: 20rem">
-                            <div class="card-body d-flex flex-column bg-primary-subtle">
-                                <h1 class="card-title text-center">Login</h1>
-                                <p class="text-bg-danger text-center">{{usr_msg}}</p>
-                                <hr>
-                                <form action="/login/0" method="post">
-                                    <div class="mt-4">
-                                        <label for="email" class="fs-5">Email</label>
-                                        <input type="text" class="form-control" name="email" required>
-                                    </div>
-                                    <div class="mt-3">
-                                        <label for="password" class="fs-5">Password</label>
-                                        <input type="password" class="form-control" name="password" required>
-                                    </div>
-                                    <div class="d-flex gap-2 justify-content-center mt-5 mb-2">
-                                        <input type="submit" class="btn btn-outline-success button" value="Login">
-                                        <input type="button" class="btn btn-outline-primary button" value="Signup"
-                                            id="slide_signup">
-                                    </div>
-                                </form>
+            <div class="col">
+                {% if just_signed_up %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Your account has been successfully created.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div style="width: 20rem" class="overflow-hidden">
+                        <div class="d-flex gap-1 move" style="width: 40rem" id="login-signup-box">
+                            <div class="card theme-color-2" style="width: 20rem">
+                                <div class="card-body d-flex flex-column">
+                                    <h1 class="card-title text-center theme-color-4 m-auto" style="color: rgba(243, 103, 42, 1);">Login</h1>
+                                    <p class="text-center">{{usr_msg}}</p>
+                                    <hr>
+                                    <form action="/login/0" method="post">
+                                        <div class="mt-4">
+                                            <input type="text" class="underline-input w-100" name="email" placeholder="Email" required>
+                                        </div>
+                                        <div class="mt-3">
+                                            <input type="password" class="underline-input w-100" name="password" placeholder="Password" required>
+                                        </div>
+                                        <div class="d-flex gap-2 justify-content-center mt-5 mb-2">
+                                            <input type="submit" class="btn btn-outline-success button" value="Login">
+                                            <input type="button" class="btn btn-outline-primary button" value="Signup"
+                                                id="slide_signup">
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card" style="width: 20rem">
-                            <div class="card-body d-flex flex-column bg-primary-subtle">
-                                <h1 class="card-title text-center">Sign up</h1>
-                                <form action="/signup" method="post" id="signup-form">
-                                    <div class="mt-3">
-                                        <label for="name" class="fs-6">Name</label>
-                                        <input type="text" class="form-control" name="name" required>
-                                    </div>
-                                    <div class="mt-3">
-                                        <label for="email" class="fs-6">Email</label>
-                                        <input type="email" class="form-control" name="email" required>
-                                    </div>
-                                    <div class="mt-3">
-                                        <label for="password" class="fs-6">Password</label>
-                                        <input type="password" class="form-control" name="password" id="password"
-                                            required>
-                                    </div>
-                                    <div class="mt-3">
-                                        <label for="re-password" class="fs-6">Re-Enter Password</label>
-                                        <input type="password" class="form-control" name="re-password"
-                                            id="password-confirm" required>
-                                    </div>
-                                    <div class="d-flex gap-2 justify-content-center mt-3 mb-2">
-                                        <input type="submit" class="btn btn-outline-success button" value="Signup">
-                                        <input type="button" class="btn btn-outline-primary button" value="back"
-                                            id="slide_login">
-                                    </div>
-                                </form>
+                            <div class="card theme-color-2" style="width: 20rem">
+                                <div class="card-body d-flex flex-column">
+                                    <h1 class="card-title text-center"  style="color: rgba(243, 103, 42, 1);">Sign up</h1>
+                                    <form action="/signup" method="post" id="signup-form">
+                                        <div class="mt-3">
+                                            <input type="text" class="underline-input w-100" name="name" placeholder="name" required>
+                                        </div>
+                                        <div class="mt-3">
+                                            <input type="email" class="underline-input w-100" name="email" placeholder="email" required>
+                                        </div>
+                                        <div class="mt-3">
+                                            <input type="password" class="underline-input w-100" name="password" placeholder="password" id="password"
+                                                required>
+                                        </div>
+                                        <div class="mt-3">
+                                            <input type="password" class="underline-input w-100" name="re-password" placeholder="re-password"
+                                                id="password-confirm" required>
+                                        </div>
+                                        <div class="d-flex gap-2 justify-content-center mt-3 mb-2">
+                                            <input type="submit" class="btn btn-outline-success button" value="Signup">
+                                            <input type="button" class="btn btn-outline-primary button" value="back"
+                                                id="slide_login">
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
+
     </div>
 </div>
 <script>
@@ -151,4 +146,73 @@
         }
     });
 </script>
+
+
+
+
+
+
+<!-- {% if just_signed_up %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Your account has been successfully created.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+<div class="d-flex justify-content-center align-items-center h-100">
+    <div style="width: 20rem" class="overflow-hidden">
+        <div class="d-flex gap-1 move" style="width: 40rem" id="login-signup-box">
+            <div class="card" style="width: 20rem">
+                <div class="card-body d-flex flex-column bg-primary-subtle">
+                    <h1 class="card-title text-center">Login</h1>
+                    <p class="text-bg-danger text-center">{{usr_msg}}</p>
+                    <hr>
+                    <form action="/login/0" method="post">
+                        <div class="mt-4">
+                            <label for="email" class="fs-5">Email</label>
+                            <input type="text" class="form-control" name="email" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="password" class="fs-5">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center mt-5 mb-2">
+                            <input type="submit" class="btn btn-outline-success button" value="Login">
+                            <input type="button" class="btn btn-outline-primary button" value="Signup"
+                                id="slide_signup">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card" style="width: 20rem">
+                <div class="card-body d-flex flex-column bg-primary-subtle">
+                    <h1 class="card-title text-center">Sign up</h1>
+                    <form action="/signup" method="post" id="signup-form">
+                        <div class="mt-3">
+                            <label for="name" class="fs-6">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="email" class="fs-6">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="password" class="fs-6">Password</label>
+                            <input type="password" class="form-control" name="password" id="password" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="re-password" class="fs-6">Re-Enter Password</label>
+                            <input type="password" class="form-control" name="re-password" id="password-confirm"
+                                required>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center mt-3 mb-2">
+                            <input type="submit" class="btn btn-outline-success button" value="Signup">
+                            <input type="button" class="btn btn-outline-primary button" value="back"
+                                id="slide_login">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
 {% endblock body %}
