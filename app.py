@@ -115,12 +115,13 @@ def view_project(id):
         return 'You are not allowed to view this project'
     user_name = session['user_name'].title()
     name = project.project
+    status = project.status
     due_date = project.due_date.isoformat().split('T')[0]
     id = project.id
     hts_task = Project_tasks.query.filter_by(project_id = id, task_status = 0)
     woi_task = Project_tasks.query.filter_by(project_id = id, task_status = 1)
     c_task = Project_tasks.query.filter_by(project_id = id, task_status = 2)
-    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id,hts_task=hts_task,woi_task=woi_task,c_task=c_task,user_name=user_name)
+    return render_template('viewProject.html',projectName=name,due_date=due_date,proj_id=id,hts_task=hts_task,woi_task=woi_task,c_task=c_task,user_name=user_name,status=status)
 
 @app.route("/add_Project_Task",methods=["GET", "POST"])
 def add_project_task():
@@ -191,6 +192,17 @@ def log_out():
     session.clear()
     return redirect(url_for('login',signed_up=0))
 
+@app.route('/update-status' ,methods=["GET", "POST"])
+def update_status():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        id = data['id']
+        project = Projects.query.filter_by(id=id).first()
+        project.status = data['status']
+        db.session.add(project)
+        db.session.commit()
+        return 'ok',200
+    
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

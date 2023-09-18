@@ -5,35 +5,58 @@
     <div class="d-flex justify-content-between">
         <div>
             <div class="d-flex gap-2">
-                <h3 class="theme-title-4">{{projectName.title()}}</h3> 
+                <h3 class="theme-title-4">{{projectName.title()}}</h3>
                 <img src="/static/add-user.png" alt="" class="small-icon mt-2">
             </div>
             <h6>Due: {{due_date}}</h6>
         </div>
         <div>
-                <div style="margin-left: 37px;" class="mt-2">
-                    <select name="" id="project-status" class="glass-effect theme-success ms-auto ps-1 pe-1" style="border-radius: 5px; font-size: 20px; border:none">
-                        <option selected value="Active">Active</option>
-                        <option value="Halt">Halt</option>
-                    </select>
-                    <!-- <img src="/static/add-user.png" alt="" class="small-icon ms-auto"> -->
-                </div>
-                <!-- <p class="mt-1 text-light mb-1">Creator: {{user_name.title()}}</p> -->
+            <div style="margin-left: 37px;" class="mt-2">
+                <select name="" proj_id="{{proj_id}}" id="project-status"
+                    class="glass-effect theme-success ms-auto ps-1 pe-1"
+                    style="border-radius: 5px; font-size: 20px; border:none">
+                    {% if status == 'Active' %}
+                    <option selected value="Active">Active</option>
+                    <option value="halt">Halt</option>
+                    {% else %}
+                    <option value="Active">Active</option>
+                    <option selected value="Halt">Halt</option>
+                    {% endif %}
+                </select>
+            </div>
         </div>
     </div>
     <script>
-        let statuss = document.getElementById('project-status');
-        statuss.addEventListener('input',(ev)=>{
-            if(statuss.value === 'Active'){
+        function set_project_status() {
+
+            if (statuss.value === 'Active') {
                 statuss.classList.remove('theme-danger')
                 statuss.classList.add('theme-success')
             }
 
-            if(statuss.value === 'Halt'){
+            if (statuss.value === 'Halt') {
                 statuss.classList.remove('theme-success')
                 statuss.classList.add('theme-danger')
             }
+        }
+        let statuss = document.getElementById('project-status');
+        statuss.addEventListener('input', (ev) => {
+            json_data = { 'id': statuss.getAttribute('proj_id'), 'status': statuss.value }
+            const headers = {
+                'Content-Type': 'application/json'
+            }
+
+            let options = {
+                method: 'POST',
+                headers: headers,
+            }
+            options['body'] = JSON.stringify(json_data)
+            fetch(`http://127.0.0.1:5001/update-status`, options)
+                .then((res) => {
+                    set_project_status()
+                })
         })
+        set_project_status()
     </script>
     <hr>
 </div>
