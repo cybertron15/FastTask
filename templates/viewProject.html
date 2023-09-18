@@ -3,16 +3,44 @@
 {% block body %}
 <div class="container">
     <div class="d-flex justify-content-between">
-        <h3>{{projectName}}</h3>
-        <p class="mt-2">Creator: {{user_name}}</p>
+        <div>
+            <div class="d-flex gap-2">
+                <h3 class="theme-title-4">{{projectName.title()}}</h3> 
+                <img src="/static/add-user.png" alt="" class="small-icon mt-2">
+            </div>
+            <h6>Due: {{due_date}}</h6>
+        </div>
+        <div>
+                <div style="margin-left: 37px;" class="mt-2">
+                    <select name="" id="project-status" class="glass-effect theme-success ms-auto ps-1 pe-1" style="border-radius: 5px; font-size: 20px; border:none">
+                        <option selected value="Active">Active</option>
+                        <option value="Halt">Halt</option>
+                    </select>
+                    <!-- <img src="/static/add-user.png" alt="" class="small-icon ms-auto"> -->
+                </div>
+                <!-- <p class="mt-1 text-light mb-1">Creator: {{user_name.title()}}</p> -->
+        </div>
     </div>
-    <h6>Due: {{due_date}}</h6>
+    <script>
+        let statuss = document.getElementById('project-status');
+        statuss.addEventListener('input',(ev)=>{
+            if(statuss.value === 'Active'){
+                statuss.classList.remove('theme-danger')
+                statuss.classList.add('theme-success')
+            }
+
+            if(statuss.value === 'Halt'){
+                statuss.classList.remove('theme-success')
+                statuss.classList.add('theme-danger')
+            }
+        })
+    </script>
     <hr>
 </div>
 <div class="container mt-3">
     <div class="d-flex gap-2" id="main">
-        <div class="container bg-secondary-subtle rounded-3" id="hts-c">
-            <h6 class="fs-5 mt-2">Have to start</h6>
+        <div class="container rounded-3 glass-effect theme-color-1" id="hts-c">
+            <h6 class="fs-5 mt-2 text-light">Have to start</h6>
             <div class="container ps-0">
                 <div class="row mb-2">
                     <div class="col-11">
@@ -20,12 +48,12 @@
                     </div>
                     <div class="col-1 p-0">
                         <input type="button" id="add-hts" value="+" proj_id="{{proj_id}}"
-                            class="btn btn-outline-success pt-1"></input>
+                            class="btn theme-button-1 pt-1"></input>
                     </div>
                 </div>
             </div>
             {% for task in hts_task %}
-            <div class="card mb-2" id="card_{{task.id}}" status={{task.task_status}}>
+            <div class="card mb-2 glass-effect theme-color-1" id="card_{{task.id}}" status={{task.task_status}}>
                 <div class="card-body">
                     <h5 class="card-title" id="cardName_{{task.id}}">{{task.task_name}}</h5>
                     <div class="d-flex justify-content-between">
@@ -43,8 +71,8 @@
             </div>
             {% endfor %}
         </div>
-        <div class="container bg-secondary-subtle rounded-3" id="woi-c">
-            <h6 class="fs-5 mt-2">Working on it</h6>
+        <div class="container glass-effect theme-color-1 rounded-3" id="woi-c">
+            <h6 class="fs-5 mt-2 text-light">Working on it</h6>
             <div class="container ps-0">
                 <div class="row mb-2">
                     <div class="col-11">
@@ -52,12 +80,12 @@
                     </div>
                     <div class="col-1 p-0">
                         <input type="button" id="add-woi" value="+" proj_id="{{proj_id}}"
-                            class="btn btn-outline-success pt-1"></input>
+                            class="btn theme-button-1 pt-1"></input>
                     </div>
                 </div>
             </div>
             {% for task in woi_task %}
-            <div class="card mb-2" id="card_{{task.id}}" status={{task.task_status}}>
+            <div class="card mb-2  glass-effect theme-color-1" id="card_{{task.id}}" status={{task.task_status}}>
                 <div class="card-body">
                     <h5 class="card-title" id="cardName_{{task.id}}">{{task.task_name}}</h5>
                     <div class="d-flex justify-content-between">
@@ -75,8 +103,8 @@
             </div>
             {% endfor %}
         </div>
-        <div class="container bg-secondary-subtle rounded-3" id="c-c">
-            <h6 class="fs-5 mt-2">Completed</h6>
+        <div class="container glass-effect theme-color-1 rounded-3" id="c-c">
+            <h6 class="fs-5 mt-2 text-light">Completed</h6>
             <div class="container ps-0">
                 <div class="row mb-2">
                     <div class="col-11">
@@ -84,12 +112,12 @@
                     </div>
                     <div class="col-1 p-0">
                         <input type="button" id="add-c" value="+" proj_id="{{proj_id}}"
-                            class="btn btn-outline-success pt-1"></input>
+                            class="btn theme-button-1 pt-1"></input>
                     </div>
                 </div>
             </div>
             {% for task in c_task %}
-            <div class="card mb-2" id="card_{{task.id}}" status={{task.task_status}}>
+            <div class="card mb-2 glass-effect theme-color-1" id="card_{{task.id}}" status={{task.task_status}}>
                 <div class="card-body">
                     <h5 class="card-title" id="cardName_{{task.id}}">{{task.task_name}}</h5>
                     <div class="d-flex justify-content-between">
@@ -130,7 +158,7 @@
 
     function create_project_task(unique_id, task_name, target_container, status) {
         if (task_name) {
-            let card = `<div class="card mb-2" id="card_${unique_id}" status=${status}>
+            let card = `<div class="card mb-2 glass-effect theme-color-1" id="card_${unique_id}" status=${status}>
                         <div class="card-body">
                             <h5 class="card-title" id="cardName_${unique_id}">${task_name}</h5>
                             <div class="d-flex justify-content-between">
@@ -157,18 +185,20 @@
         let card_name = document.getElementById("cardName_" + target_id).innerText
         let target_status = parseInt(target_card.getAttribute('status'))
         const headers = {
-                'Content-Type': 'application/json'
-            }
-        
-        let options={method: 'POST',
-                    headers: headers,}
+            'Content-Type': 'application/json'
+        }
+
+        let options = {
+            method: 'POST',
+            headers: headers,
+        }
         if (action == "left" && target_status > 0) {
             target_card.remove()
             target_status -= 1
 
             target_card_container = document.getElementById(status_map[target_status])
 
-            json_data = { 'id': target_id,'status':target_status }
+            json_data = { 'id': target_id, 'status': target_status }
             options['body'] = JSON.stringify(json_data)
 
             fetch(`http://127.0.0.1:5001/update_Project_Task`, options)
@@ -182,7 +212,7 @@
 
             target_card_container = document.getElementById(status_map[target_status])
 
-            json_data = { 'id': target_id,'status':target_status}
+            json_data = { 'id': target_id, 'status': target_status }
             options['body'] = JSON.stringify(json_data)
 
             fetch(`http://127.0.0.1:5001/update_Project_Task`, options)
