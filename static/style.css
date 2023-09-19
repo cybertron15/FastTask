@@ -143,3 +143,22 @@ body{
 .small-icon:hover{
     transform: scale(1.1);
 }
+.small-icon:active{
+    transform: scale(0.9);
+}
+
+.active-project{
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: rgb(140, 218, 23);
+    display: inline-block;
+}
+
+.halt-project{
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: rgb(218, 36, 23);
+    display: inline-block;
+}

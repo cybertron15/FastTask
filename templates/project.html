@@ -57,7 +57,12 @@
                         <div class="container-fluid mt-auto" id="bottom">
                             <hr>
                             <span class="card-text"><b>Due date:</b> <span class="">{{project.due_date}}</span></span>
-                            <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span></span>
+                           {% if project.status == 'Active' %}
+                                <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span> <div class="active-project"></div></span>
+                          {% else %}
+                          <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span> <div class="halt-project"></div></span>
+                          {% endif %}
+                            
                             <a href="/viewProject/{{project.id}}" class="btn mt-2 theme-button-1">Open</a>
                         </div>
                     </div>

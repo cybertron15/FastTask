@@ -44,3 +44,11 @@ class Users(db.Model):
     usr_name = db.Column(db.String(100), nullable=False, default="admin")
     usr_pass = db.Column(db.String(100), nullable=False, default="admin")
     usr_email = db.Column(db.String(100), nullable=False, default="admin@gmail.com")
+
+class InvitedProjects(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usr_id = db.Column(db.String(100),nullable=False)
+    project_owner_id = db.Column(db.String(100),nullable=False)
+    project_id = db.Column(db.String(100),nullable=False)
+    request_accepted = db.Column(db.Boolean,nullable=False,default=False)
+    privlage = db.Column(db.String(20),nullable=False ,default='basic')

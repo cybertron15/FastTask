@@ -6,7 +6,25 @@
         <div>
             <div class="d-flex gap-2">
                 <h3 class="theme-title-4">{{projectName.title()}}</h3>
-                <img src="/static/add-user.png" alt="" class="small-icon mt-2">
+                <div class="dropdown">
+                    <img src="/static/add-user.png" alt="" class="small-icon mt-2" data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside">
+                    <div class="dropdown-menu">
+                        <h6 class="ms-3">Invite people to your project</h6>
+                        <div class="d-flex p-2" role="search" style="width: 400px;">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                                id="searchInput">
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </div>
+                        <ul id="search_result">
+                            <li class="dropdown-item ps-1">No Results...</li>
+                        </ul>
+                        <h6 class="ms-3">Paricipants</h6>
+                        <ul>
+                            <li class="dropdown-item ps-1">No Participants</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <h6>Due: {{due_date}}</h6>
         </div>
@@ -17,7 +35,7 @@
                     style="border-radius: 5px; font-size: 20px; border:none">
                     {% if status == 'Active' %}
                     <option selected value="Active">Active</option>
-                    <option value="halt">Halt</option>
+                    <option value="Halt">Halt</option>
                     {% else %}
                     <option value="Active">Active</option>
                     <option selected value="Halt">Halt</option>
@@ -26,38 +44,6 @@
             </div>
         </div>
     </div>
-    <script>
-        function set_project_status() {
-
-            if (statuss.value === 'Active') {
-                statuss.classList.remove('theme-danger')
-                statuss.classList.add('theme-success')
-            }
-
-            if (statuss.value === 'Halt') {
-                statuss.classList.remove('theme-success')
-                statuss.classList.add('theme-danger')
-            }
-        }
-        let statuss = document.getElementById('project-status');
-        statuss.addEventListener('input', (ev) => {
-            json_data = { 'id': statuss.getAttribute('proj_id'), 'status': statuss.value }
-            const headers = {
-                'Content-Type': 'application/json'
-            }
-
-            let options = {
-                method: 'POST',
-                headers: headers,
-            }
-            options['body'] = JSON.stringify(json_data)
-            fetch(`http://127.0.0.1:5001/update-status`, options)
-                .then((res) => {
-                    set_project_status()
-                })
-        })
-        set_project_status()
-    </script>
     <hr>
 </div>
 <div class="container mt-3">
@@ -294,6 +280,117 @@
                 let target_id = event.target.id.split('_')
                 card_oparations(target_id[1], target_id[0])
             }
+        }
+    })
+</script>
+
+<script>
+    function set_project_status() {
+
+        if (statuss.value === 'Active') {
+            statuss.classList.remove('theme-danger')
+            statuss.classList.add('theme-success')
+        }
+
+        if (statuss.value === 'Halt') {
+            statuss.classList.remove('theme-success')
+            statuss.classList.add('theme-danger')
+        }
+    }
+    let statuss = document.getElementById('project-status');
+    statuss.addEventListener('input', (ev) => {
+        json_data = { 'id': statuss.getAttribute('proj_id'), 'status': statuss.value }
+        const headers = {
+            'Content-Type': 'application/json'
+        }
+
+        let options = {
+            method: 'POST',
+            headers: headers,
+        }
+        options['body'] = JSON.stringify(json_data)
+        fetch(`http://127.0.0.1:5001/update-status`, options)
+            .then((res) => {
+                set_project_status()
+            })
+    })
+    set_project_status()
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const searchResult = document.getElementById('search_result');
+        let timer = null;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(timer); // Clear previous timer
+
+            const partialEmail = searchInput.value.trim();
+
+            // Delay the API request to avoid excessive calls
+            timer = setTimeout(function () {
+                if (partialEmail.length === 0) {
+                    searchResult.innerHTML = '<li class="dropdown-item ps-0">No Results...</li>'; // Clear suggestions if input is empty
+                    return;
+                }
+
+                fetch('http://127.0.0.1:5001/get_user_suggestions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ partial_email: partialEmail, project_id: statuss.getAttribute('proj_id') }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const suggestions = data.suggestions;
+                        searchResult.innerHTML = '';
+                        if (suggestions.length === 0) {
+                            searchResult.innerHTML = '<li class="dropdown-item ps-0">No Results...</li>';
+                        } else {
+                            suggestions.forEach(suggestion => {
+                                const listItem = document.createElement('li');
+                                let disable_button = ""
+                                let button_value = "Invite"
+                                if(suggestion[2] == 'invited'){
+                                    let disable_button = "disabled"
+                                    let button_value = "Invited"
+                                }
+                                listItem.className = 'dropdown-item';
+                                listItem.innerHTML = 
+                                                    `<div class="d-flex border-1">
+                                                        <p>${suggestion[1]}</p>
+                                                        <input type="button" class="btn btn-sm btn-outline-primary pt-0 pb-0" value="${button_value}" id="${suggestion[0]}" ${disable_button}>
+                                                    </div>`
+                                listItem.classList.add('ps-0')
+                                searchResult.appendChild(listItem);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }, 500); // Adjust the delay time (milliseconds) as needed
+        });
+    });
+</script>
+
+<script>
+    let search_res = document.getElementById('search_result')
+    search_res.addEventListener('click', (ev) => {
+        if (event.target && event.target.tagName == "INPUT") {
+            let usr_id = event.target.id
+            let proj_id = statuss.getAttribute('proj_id')
+
+            fetch('http://127.0.0.1:5001/invite_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 'user_id': usr_id, project_id: statuss.getAttribute('proj_id') }),
+                })
+
         }
     })
 </script>
