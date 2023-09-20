@@ -34,10 +34,10 @@ def login_check():
     logged_in = session.get("logged_in")
     path = request.path
     whitelisted_paths = ["/login","/signup","/static"]
-    if (
-        not logged_in
-        and not all(filter(lambda wl_path: path.startswith(wl_path),whitelisted_paths))
-    ):
+    if not logged_in:
+        for wlp in whitelisted_paths:
+            if path.startswith(wlp):
+                return
         return redirect(url_for("login", signed_up=0))
 
 
@@ -256,11 +256,12 @@ def get_suggestions():
         print(pending_users)
         suggestions_list = []
         for user in suggestions:
-            if user.id != session["user_id"] or user.id not in existing_users:
-                suggestions_list.append([user.id, user.usr_email,'not invited'])
-            # if user.id != session["user_id"] or user.id in pending_users:
-            #     suggestions_list.append([user.id, user.usr_email,'invited'])
-        print(suggestions_list)
+            print(user.usr_email,session["user_id"],user.id)
+            if user.id != session["user_id"] and user.id not in existing_users:
+                is_invited = False
+                if user.id in pending_users:
+                    is_invited = True
+                suggestions_list.append([user.id, user.usr_email, is_invited])
         return jsonify({"suggestions": suggestions_list})
 
 
@@ -277,7 +278,7 @@ def invite_user():
         new_invite = InvitedProjects(usr_id=user_id,project_owner_id=owner_id,project_id=project_id)
         db.session.add(new_invite)
         db.session.commit()
-        return 'ok'
+        return jsonify('ok')
 
 if __name__ == "__main__":
     with app.app_context():
