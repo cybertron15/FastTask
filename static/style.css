@@ -1,14 +1,37 @@
-body{
+body {
     background-image: url(/static/bg2.jpg);
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+/* Define the scrollbar track */
+::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+  }
+  
+  /* Define the scrollbar thumb (the draggable part) */
+  ::-webkit-scrollbar-thumb {
+    background: #2a2929; /* Color of the thumb */
+    border-radius: 4px; /* Rounded corners for the thumb */
+  }
+  
+  /* Define the scrollbar track (the non-draggable part) */
+  ::-webkit-scrollbar-track {
+    background: #a49a9a; /* Color of the track */
+  }
+  
+  /* Define the scrollbar corner (between vertical and horizontal scrollbar) */
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  
+
 .icon {
     width: 70px;
     height: 70px;
 }
 
-.active{
+.active {
     color: rgba(243, 103, 42, 1) !important;
     transform: scale(1.1);
 }
@@ -44,7 +67,7 @@ body{
     height: 20px;
 }
 
-.project_icon:hover{
+.project_icon:hover {
     transform: scale(1.1);
 }
 
@@ -61,41 +84,42 @@ body{
     background-color: rgba(58, 61, 64, 0.15);
 }
 
-.theme-color-4{
-    background-color : rgba(243, 102, 42, 0.15);
+.theme-color-4 {
+    background-color: rgba(243, 102, 42, 0.15);
 }
 
-.theme-title-4{
-    color : rgba(243, 103, 42, 1);
+.theme-title-4 {
+    color: rgba(243, 103, 42, 1);
 }
 
-.theme-warning{
-    background-color : rgba(243, 199, 42, 0.258);
+.theme-warning {
+    background-color: rgba(243, 199, 42, 0.258);
 }
 
-.theme-success{
-    background-color : rgba(42, 243, 42, 0.258);
+.theme-success {
+    background-color: rgba(42, 243, 42, 0.258);
 }
 
-.theme-danger{
-    background-color : rgba(243, 42, 42, 0.258);
+.theme-danger {
+    background-color: rgba(243, 42, 42, 0.258);
 }
 
-.theme-button-1{
-    background-color : rgba(243, 102, 42, 0.696);
+.theme-button-1 {
+    background-color: rgba(243, 102, 42, 0.696);
 }
 
-.theme-button-1:hover{
-    background-color : rgba(243, 102, 42, 0.912);
+.theme-button-1:hover {
+    background-color: rgba(243, 102, 42, 0.912);
     transform: scale(1.1);
 }
+
 .glass-effect {
     box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
     /* background-color: rgba(255, 255, 255, .15); */
     backdrop-filter: blur(5px);
 }
 
-.bg-vid{
+.bg-vid {
     position: absolute;
     z-index: -1;
     right: 0;
@@ -105,49 +129,57 @@ body{
 /* Custom CSS to style the input as a white underline */
 .underline-input {
     border: none;
-    border-bottom: 1px solid #fff; /* White underline */
+    border-bottom: 1px solid #fff;
+    /* White underline */
     border-radius: 0;
-    background-color: transparent; /* Transparent background */
-    padding: 5px; /* Add some padding for spacing */
-    font-size: 20px; /* Increase the font size */
-    color: #fff; /* Text color */
-    outline: none; /* Remove the default input focus outline */
-   
+    background-color: transparent;
+    /* Transparent background */
+    padding: 5px;
+    /* Add some padding for spacing */
+    font-size: 20px;
+    /* Increase the font size */
+    color: #fff;
+    /* Text color */
+    outline: none;
+    /* Remove the default input focus outline */
+
 }
 
-.underline-input::placeholder{
-    font-size: 20px; /* Increase the font size */
+.underline-input::placeholder {
+    font-size: 20px;
+    /* Increase the font size */
     color: #fff;
 }
 
-@media (min-aspect-ratio: 16/9){
-    .bg-vid{
+@media (min-aspect-ratio: 16/9) {
+    .bg-vid {
         width: 100%;
         height: auto;
     }
 }
 
-@media (max-aspect-ratio: 16/9){
-    .bg-vid{
+@media (max-aspect-ratio: 16/9) {
+    .bg-vid {
         width: auto;
         height: 100%;
     }
 }
 
-.small-icon{
+.small-icon {
     height: 20px;
     width: 20px;
     margin-bottom: 5px;
 }
 
-.small-icon:hover{
+.small-icon:hover {
     transform: scale(1.1);
 }
-.small-icon:active{
+
+.small-icon:active {
     transform: scale(0.9);
 }
 
-.active-project{
+.active-project {
     height: 10px;
     width: 10px;
     border-radius: 50%;
@@ -155,10 +187,40 @@ body{
     display: inline-block;
 }
 
-.halt-project{
+.halt-project {
     height: 10px;
     width: 10px;
     border-radius: 50%;
     background-color: rgb(218, 36, 23);
     display: inline-block;
+}
+
+.invite-btn {
+    width: 80px;
+    height: 30px;
+    border: 2px solid rgb(236, 156, 52);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.invite-btn:hover {
+    background-color: rgb(236, 156, 52);
+    color: white;
+}
+
+.invite-btn:active {
+    transform: scale(0.98);
+}
+
+.dropdown-item:active{
+    background-color: #ffffff00;
+    color: rgb(0, 0, 0);
+}
+
+.invited-btn{
+    width: 70px;
+    height: 30px;
+    background-color: #fff;
+    color: rgb(11, 178, 24);
+    border: none;
 }
