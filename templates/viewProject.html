@@ -16,12 +16,12 @@
                                 id="searchInput">
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </div>
-                        <ul id="search_result">
-                            <li class="dropdown-item ps-1">No Results...</li>
+                        <ul id="search_result" class="ps-0">
+                            <li class="dropdown-item ps-1"><div class="ps-3">No Results...</div></li>
                         </ul>
                         <h6 class="ms-3">Paricipants</h6>
-                        <ul>
-                            <li class="dropdown-item ps-1">No Participants</li>
+                        <ul class="ps-0">
+                            <li class="dropdown-item ps-1"><div class="ps-3">No Participants</div></li>
                         </ul>
                     </div>
                 </div>
@@ -331,7 +331,7 @@
             // Delay the API request to avoid excessive calls
             timer = setTimeout(function () {
                 if (partialEmail.length === 0) {
-                    searchResult.innerHTML = '<li class="dropdown-item ps-0">No Results...</li>'; // Clear suggestions if input is empty
+                    searchResult.innerHTML = '<li class="dropdown-item ps-0"><div class="ps-3">No Results...</div></li>'; // Clear suggestions if input is empty
                     return;
                 }
 
@@ -347,21 +347,23 @@
                         const suggestions = data.suggestions;
                         searchResult.innerHTML = '';
                         if (suggestions.length === 0) {
-                            searchResult.innerHTML = '<li class="dropdown-item ps-0">No Results...</li>';
+                            searchResult.innerHTML = '<li class="dropdown-item ps-3"><div class="ps-3"> No Results...</div></li>';
                         } else {
                             suggestions.forEach(suggestion => {
                                 const listItem = document.createElement('li');
                                 let disable_button = ""
                                 let button_value = "Invite"
-                                if(suggestion[2] == 'invited'){
-                                    let disable_button = "disabled"
-                                    let button_value = "Invited"
+                                let style_class = "invite-btn"
+                                if(suggestion[2] === true){
+                                    disable_button = "disabled"
+                                    button_value = "Invited \u2713"
+                                    style_class = "invited-btn"
                                 }
                                 listItem.className = 'dropdown-item';
                                 listItem.innerHTML = 
-                                                    `<div class="d-flex border-1">
-                                                        <p>${suggestion[1]}</p>
-                                                        <input type="button" class="btn btn-sm btn-outline-primary pt-0 pb-0" value="${button_value}" id="${suggestion[0]}" ${disable_button}>
+                                                    `<div class="d-flex border-1 justify-content-between pe-2">
+                                                        <p class="ps-3">${suggestion[1]}</p>
+                                                        <input type="button" class="${style_class}" value="${button_value}" id="${suggestion[0]}" ${disable_button}>
                                                     </div>`
                                 listItem.classList.add('ps-0')
                                 searchResult.appendChild(listItem);
@@ -377,18 +379,25 @@
 </script>
 
 <script>
+    // script to send invite
     let search_res = document.getElementById('search_result')
-    search_res.addEventListener('click', (ev) => {
+    search_res.addEventListener('click', (event) => {
         if (event.target && event.target.tagName == "INPUT") {
             let usr_id = event.target.id
             let proj_id = statuss.getAttribute('proj_id')
-
             fetch('http://127.0.0.1:5001/invite_user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ 'user_id': usr_id, project_id: statuss.getAttribute('proj_id') }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    event.target.disabled = true
+                    event.target.value = "Invited \u2713"
+                    event.target.classList.remove('invite-btn')
+                    event.target.classList.add('invited-btn')
                 })
 
         }
