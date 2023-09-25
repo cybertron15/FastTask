@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/style.css">
   </head>
   <body class="h-100">
-    <div class="modal fade" id="logoutModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="editGoal"
+    <div class="modal fade" id="logoutModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="logout"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -28,6 +28,44 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="inviteModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="logout"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="inviteModalTitle">Invites</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h6>Invites</h6>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Project Name</th>
+                  <th scope="col">Owner Name</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Fast task</td>
+                  <td>Otto</td>
+                  <td><div class="d-flex gap-2">
+                    <img src="/static/accept.png" alt="" class="small-img">
+                    <img src="/static/cross.png" alt="" class="small-img">
+                  </div></td>
+                </tr>
+              </tbody>
+            </table>
+            <table></table>
+          </div>
+          <div class="modal-footer">
+            <!-- need to add data-bs-dismiss="modal" for this button otherwise the modal wont close  -->
+          </div>
+        </div>
+      </div>
+    </div>
     {% block nav %}
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
@@ -40,9 +78,12 @@
             </li>
             <li class="nav-item">
               <a class="nav-link {% block project_active %}{% endblock project_active %}" href="/projects">Projects</a>
+            </li>
+             
+
           </ul>
-          <input type="button" class="btn btn-outline-danger" value="logout" data-bs-toggle="modal"
-            data-bs-target="#logoutModal">
+          <input type="button" class="btn btn-outline-success me-2" value="Invites" data-bs-toggle="modal" data-bs-target="#inviteModal">
+          <input type="button" class="btn btn-outline-danger" value="logout" data-bs-toggle="modal" data-bs-target="#logoutModal">
         </div>
       </div>
     </nav>
