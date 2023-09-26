@@ -256,7 +256,6 @@ def get_suggestions():
         print(pending_users)
         suggestions_list = []
         for user in suggestions:
-            print(user.usr_email,session["user_id"],user.id)
             if user.id != session["user_id"] and user.id not in existing_users:
                 is_invited = False
                 if user.id in pending_users:
@@ -272,13 +271,23 @@ def invite_user():
         user_id = data["user_id"]
         project_id = data["project_id"]
         owner_id = session["user_id"]
-        print(user_id)
-        print(project_id)
-        print(owner_id)
         new_invite = InvitedProjects(usr_id=user_id,project_owner_id=owner_id,project_id=project_id)
         db.session.add(new_invite)
         db.session.commit()
         return jsonify('ok')
+     
+@app.route("/get_invites", methods=["POST"])
+def get_user_invites():
+     if request.method == 'POST':
+        user_id = session["user_id"]
+        invites = InvitedProjects.query.filter_by(usr_id=user_id).all()
+        invite_list = []
+        for invite in invites:
+            project = Projects.query.filter_by(id=invite.project_id).first().project
+            owner = Users.query.filter_by(id=invite.project_owner_id).first().usr_name
+            invite_list.append({"project":project,"owner":owner})
+            
+        return jsonify({"invites": invite_list})
 
 if __name__ == "__main__":
     with app.app_context():

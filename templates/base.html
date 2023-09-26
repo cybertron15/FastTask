@@ -1,99 +1,130 @@
 <!doctype html>
 <html lang="en" class="h-100">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fast-Task</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/style.css">
-  </head>
-  <body class="h-100">
-    <div class="modal fade" id="logoutModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="logout"
-      aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="logoutModalTitle">Logout</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to logout?
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="update-goal" data-bs-dismiss="modal"  class="btn">Cancel</button>
-            <a href="/logout"><button type="button" class="btn btn-outline-danger">logout</button></a>
-            <!-- need to add data-bs-dismiss="modal" for this button otherwise the modal wont close  -->
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="modal fade" id="inviteModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="logout"
-      aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="inviteModalTitle">Invites</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <h6>Invites</h6>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Project Name</th>
-                  <th scope="col">Owner Name</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Fast task</td>
-                  <td>Otto</td>
-                  <td><div class="d-flex gap-2">
-                    <img src="/static/accept.png" alt="" class="small-img">
-                    <img src="/static/cross.png" alt="" class="small-img">
-                  </div></td>
-                </tr>
-              </tbody>
-            </table>
-            <table></table>
-          </div>
-          <div class="modal-footer">
-            <!-- need to add data-bs-dismiss="modal" for this button otherwise the modal wont close  -->
-          </div>
-        </div>
-      </div>
-    </div>
-    {% block nav %}
-    <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">F<span style="color: rgba(243, 103, 42, 1);">T</span> </a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link {% block task_active %}{% endblock task_active %}" aria-current="page"
-                href="/">Tasks</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% block project_active %}{% endblock project_active %}" href="/projects">Projects</a>
-            </li>
-             
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Fast-Task</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+			integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+		<link rel="stylesheet" href="/static/style.css">
+	</head>
 
-          </ul>
-          <input type="button" class="btn btn-outline-success me-2" value="Invites" data-bs-toggle="modal" data-bs-target="#inviteModal">
-          <input type="button" class="btn btn-outline-danger" value="logout" data-bs-toggle="modal" data-bs-target="#logoutModal">
-        </div>
-      </div>
-    </nav>
-    {% endblock nav %}
-    {% block body %}
+	<body class="h-100">
+		<div class="modal fade" id="logoutModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="logout"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="logoutModalTitle">Logout</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Are you sure you want to logout?
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="update-goal" data-bs-dismiss="modal" class="btn">Cancel</button>
+						<a href="/logout"><button type="button" class="btn btn-outline-danger">logout</button></a>
+						<!-- need to add data-bs-dismiss="modal" for this button otherwise the modal wont close  -->
+					</div>
+				</div>
+			</div>
+		</div>
 
-    {% endblock body %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-      crossorigin="anonymous"></script>
-  </body>
+		<div class="modal fade" id="inviteModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="logout"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="inviteModalTitle">Invites</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<h6>Invites</h6>
+						<table class="table" id="invites-table">
+							<thead>
+								<tr>
+									<th scope="col">Project Name</th>
+									<th scope="col">Owner Name</th>
+									<th scope="col">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+						<table></table>
+					</div>
+					<div class="modal-footer">
+						<!-- need to add data-bs-dismiss="modal" for this button otherwise the modal wont close  -->
+					</div>
+				</div>
+			</div>
+		</div>
+		{% block nav %}
+		<nav class="navbar navbar-expand-lg">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/">F<span style="color: rgba(243, 103, 42, 1);">T</span> </a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link {% block task_active %}{% endblock task_active %}" aria-current="page"
+								href="/">Tasks</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link {% block project_active %}{% endblock project_active %}"
+								href="/projects">Projects</a>
+						</li>
+
+
+					</ul>
+					<input type="button" class="btn btn-outline-success me-2" value="Invites" id="invite-btn"
+						data-bs-toggle="modal" data-bs-target="#inviteModal">
+					<input type="button" class="btn btn-outline-danger" value="logout" data-bs-toggle="modal"
+						data-bs-target="#logoutModal">
+				</div>
+			</div>
+		</nav>
+		{% endblock nav %}
+		{% block body %}
+
+		{% endblock body %}
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+			crossorigin="anonymous"></script>
+
+		<script>
+			let invite_button = document.getElementById('invite-btn')
+			invite_button.onclick = () => {
+				fetch('http://127.0.0.1:5001/get_invites',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                })
+					.then(response => response.json())
+					.then(data => {
+						let invtes_table = document.getElementById('invites-table')
+						let tbody = invtes_table.getElementsByTagName("tbody")[0];
+						console.log(data);
+						// Iterate through the data and add rows
+						for (const item of data['invites']) {
+							const row = tbody.insertRow();
+							const proj_name = row.insertCell(0);
+							const owner_name = row.insertCell(1);
+							const actions = row.insertCell(2);
+
+							proj_name.innerHTML = item.project;
+							owner_name.innerHTML = item.owner;
+							actions.innerHTML = `<div class="d-flex gap-2">
+											<img src="/static/accept.png" alt="" class="small-img">
+											<img src="/static/cross.png" alt="" class="small-img">
+										</div>`
+						}
+					})
+
+			}
+		</script>
+	</body>
 
 </html>
