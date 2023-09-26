@@ -94,6 +94,7 @@
 
 		<script>
 			let invite_button = document.getElementById('invite-btn')
+			let invite_table = document.getElementById('invites-table')
 			invite_button.onclick = () => {
 				fetch('http://127.0.0.1:5001/get_invites',{
                     method: 'POST',
@@ -104,9 +105,8 @@
                 })
 					.then(response => response.json())
 					.then(data => {
-						let invtes_table = document.getElementById('invites-table')
-						let tbody = invtes_table.getElementsByTagName("tbody")[0];
-						console.log(data);
+						let tbody = invite_table.getElementsByTagName("tbody")[0];
+						tbody.replaceChildren([])
 						// Iterate through the data and add rows
 						for (const item of data['invites']) {
 							const row = tbody.insertRow();
@@ -117,14 +117,33 @@
 							proj_name.innerHTML = item.project;
 							owner_name.innerHTML = item.owner;
 							actions.innerHTML = `<div class="d-flex gap-2">
-											<img src="/static/accept.png" alt="" class="small-img">
-											<img src="/static/cross.png" alt="" class="small-img">
+											<img src="/static/accept.png" alt="" class="small-img" invite-id = "${item.id}" action-type="accept">
+											<img src="/static/cross.png" alt="" class="small-img" invite-id = "${item.id}" action-type="reject">
 										</div>`
 						}
 					})
 
 			}
-		</script>
+			
+			invite_table.addEventListener('click',(ev)=>{
+				if (ev.target && event.target.tagName == 'IMG') {
+					let action = ev.target.getAttribute('action-type')
+					let invite_id = ev.target.getAttribute('invite-id')
+					fetch('http://127.0.0.1:5001/update_invites',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({'id':invite_id,'action':action}),
+                })
+				.then(response => response.json())
+				.then(data => {
+					if (data == 'ok'){
+						ev.target.parentElement.parentElement.parentElement.remove()
+					}
+				})
+			}})
+	</script>
 	</body>
 
 </html>

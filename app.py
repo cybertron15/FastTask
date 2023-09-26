@@ -280,14 +280,32 @@ def invite_user():
 def get_user_invites():
      if request.method == 'POST':
         user_id = session["user_id"]
-        invites = InvitedProjects.query.filter_by(usr_id=user_id).all()
+        invites = InvitedProjects.query.filter_by(usr_id=user_id,request_accepted=False).all()
         invite_list = []
         for invite in invites:
             project = Projects.query.filter_by(id=invite.project_id).first().project
             owner = Users.query.filter_by(id=invite.project_owner_id).first().usr_name
-            invite_list.append({"project":project,"owner":owner})
-            
+            invite_list.append({"project":project,"owner":owner,'id':invite.id})
         return jsonify({"invites": invite_list})
+
+@app.route("/update_invites",methods=["POST"])
+def update_user_invites():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        user = session['user_id']
+        invite = InvitedProjects.query.filter_by(id=data['id'],usr_id=user).first()
+        if invite:
+            if data['action'] == "accept":
+                invite.request_accepted = True
+                db.session.add(invite)
+            if data['action'] == "reject":
+                db.session.delete(invite)
+            db.session.commit()
+            return jsonify('ok')
+        else:
+            return jsonify('request rejected')
+
+
 
 if __name__ == "__main__":
     with app.app_context():
