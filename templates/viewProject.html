@@ -20,7 +20,7 @@
                             <li class="dropdown-item ps-1"><div class="ps-3">No Results...</div></li>
                         </ul>
                         <h6 class="ms-3">Paricipants</h6>
-                        <ul class="ps-0">
+                        <ul id="participant_list" class="ps-0">
                             <li class="dropdown-item ps-1"><div class="ps-3">No Participants...</div></li>
                         </ul>
                     </div>
@@ -376,33 +376,35 @@
         });
     });
     
+    // displays participants in partipants inside view project
     let invite_btn = document.getElementById('invite-button')
+    let participant_list = document.getElementById('participant_list')
     invite_btn.addEventListener('click', (ev)=>{
-        fetch('http://127.0.0.1:5001/get_invited_user_for_project', {
+        fetch('http://127.0.0.1:5001/get_users_for_project', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({project_id: statuss.getAttribute('proj_id') }),
+                    body: JSON.stringify({project_id: statuss.getAttribute('proj_id')}),
                 })
                     .then(response => response.json())
                     .then(data => {
-                        const suggestions = data.users;
-                        searchResult.innerHTML = '';
-                        if (suggestions.length === 0) {
-                            searchResult.innerHTML = '<li class="dropdown-item ps-3"><div class="ps-3"> No Participants...</div></li>';
+                        const invited_users = data.users;
+                        participant_list.innerHTML = '';
+                        if (invited_users.length === 0) {
+                            participant_list.innerHTML = '<li class="dropdown-item ps-3"><div class="ps-3"> No Participants...</div></li>';
                         } else {
-                            suggestions.forEach(suggestion => {
+                            invited_users.forEach(user => {
                                 const listItem = document.createElement('li');
                                 
                                 listItem.className = 'dropdown-item';
                                 listItem.innerHTML = 
                                                     `<div class="d-flex border-1 justify-content-between pe-2">
-                                                        <p class="ps-3">${suggestion[1]}</p>
-                                                        <input type="button" class="${style_class}" value="${button_value}" id="${suggestion[0]}" ${disable_button}>
+                                                        <p class="ps-3">${user[1]}</p>
+                                                        <input type="button" class="btn btn-danger btn-close" id="${user[0]}">
                                                     </div>`
                                 listItem.classList.add('ps-0')
-                                searchResult.appendChild(listItem);
+                                participant_list.appendChild(listItem);
                             });
                         }
                     })
@@ -411,6 +413,24 @@
                     });
     })
 
+    // deletes participants from the parcipant list
+	participant_list.addEventListener('click',(ev)=>{
+		if (ev.target && event.target.tagName == 'INPUT') {
+			let id = ev.target.getAttribute('id')
+			fetch('http://127.0.0.1:5001/update_invites?kick_user=true',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({'id':id,'action':"reject"}),
+        })
+		.then(response => response.json())
+		.then(data => {
+			if (data == 'ok'){
+				ev.target.parentElement.parentElement.remove()
+			}
+		})
+	}})
 </script>
 
 <script>

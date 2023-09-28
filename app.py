@@ -207,7 +207,6 @@ def login(signed_up):
             usr_msg = "Login failed!"
     return render_template("login.html", usr_msg=usr_msg, just_signed_up=signed_up)
 
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -222,12 +221,10 @@ def signup():
         return redirect("/login/1")
     return redirect("/login/0")
 
-
 @app.route("/logout", methods=["GET", "POST"])
 def log_out():
     session.clear()
     return redirect(url_for("login", signed_up=0))
-
 
 @app.route("/update-status", methods=["GET", "POST"])
 def update_status():
@@ -239,7 +236,6 @@ def update_status():
         db.session.add(project)
         db.session.commit()
         return "ok", 200
-
 
 @app.route("/get_user_suggestions", methods=["POST"])
 def get_suggestions():
@@ -262,7 +258,6 @@ def get_suggestions():
                     is_invited = True
                 suggestions_list.append([user.id, user.usr_email, is_invited])
         return jsonify({"suggestions": suggestions_list})
-
 
 @app.route("/invite_user", methods=["POST"])
 def invite_user():
@@ -293,9 +288,15 @@ def update_user_invites():
     if request.method == "POST":
         data = json.loads(request.data)
         user = session['user_id']
-        invite = InvitedProjects.query.filter_by(id=data['id'],usr_id=user).first()
+        kick_user = request.args.get('kick_user')
+        if kick_user:
+            # making sure that the user owns the project before kicking anyone
+            invite = InvitedProjects.query.filter_by(id=data['id'],project_owner_id=user).first()
+        else:
+            # making sure that the user is invited to the project
+            invite = InvitedProjects.query.filter_by(id=data['id'],usr_id=user).first()
         if invite:
-            if data['action'] == "accept":
+            if not kick_user and data['action'] == "accept":
                 invite.request_accepted = True
                 db.session.add(invite)
             if data['action'] == "reject":
@@ -306,6 +307,20 @@ def update_user_invites():
             return jsonify('request rejected')
 
 
+@app.route("/get_users_for_project",methods=["POST"])
+def users_for_project():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        invites = InvitedProjects.query.filter_by(project_id=data['project_id'],request_accepted=True).all()
+        invited_users_list = []
+        if invites:
+            for invite in invites:
+                invited_user = Users.query.filter_by(id=invite.usr_id).first()
+                invited_users_list.append([invite.id,invited_user.usr_name])
+            print(invited_users_list)
+            return jsonify({"users":invited_users_list})
+        else:
+            return jsonify({"users":invited_users_list})
 
 if __name__ == "__main__":
     with app.app_context():
