@@ -7,7 +7,7 @@
             <div class="d-flex gap-2">
                 <h3 class="theme-title-4">{{projectName.title()}}</h3>
                 <div class="dropdown">
-                    <img src="/static/add-user.png" alt="" class="small-icon mt-2" data-bs-toggle="dropdown"
+                    <img src="/static/add-user.png" alt="" class="small-icon mt-2" data-bs-toggle="dropdown" id="invite-button"
                         data-bs-auto-close="outside">
                     <div class="dropdown-menu">
                         <h6 class="ms-3">Invite people to your project</h6>
@@ -21,7 +21,7 @@
                         </ul>
                         <h6 class="ms-3">Paricipants</h6>
                         <ul class="ps-0">
-                            <li class="dropdown-item ps-1"><div class="ps-3">No Participants</div></li>
+                            <li class="dropdown-item ps-1"><div class="ps-3">No Participants...</div></li>
                         </ul>
                     </div>
                 </div>
@@ -286,7 +286,6 @@
 
 <script>
     function set_project_status() {
-
         if (statuss.value === 'Active') {
             statuss.classList.remove('theme-danger')
             statuss.classList.add('theme-success')
@@ -331,7 +330,7 @@
             // Delay the API request to avoid excessive calls
             timer = setTimeout(function () {
                 if (partialEmail.length === 0) {
-                    searchResult.innerHTML = '<li class="dropdown-item ps-0"><div class="ps-3">No Results...</div></li>'; // Clear suggestions if input is empty
+                    searchResult.innerHTML = '<li class="dropdown-item ps-3"><div class="ps-3">No Results...</div></li>'; // Clear suggestions if input is empty
                     return;
                 }
 
@@ -376,6 +375,42 @@
             }, 500); // Adjust the delay time (milliseconds) as needed
         });
     });
+    
+    let invite_btn = document.getElementById('invite-button')
+    invite_btn.addEventListener('click', (ev)=>{
+        fetch('http://127.0.0.1:5001/get_invited_user_for_project', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({project_id: statuss.getAttribute('proj_id') }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const suggestions = data.users;
+                        searchResult.innerHTML = '';
+                        if (suggestions.length === 0) {
+                            searchResult.innerHTML = '<li class="dropdown-item ps-3"><div class="ps-3"> No Participants...</div></li>';
+                        } else {
+                            suggestions.forEach(suggestion => {
+                                const listItem = document.createElement('li');
+                                
+                                listItem.className = 'dropdown-item';
+                                listItem.innerHTML = 
+                                                    `<div class="d-flex border-1 justify-content-between pe-2">
+                                                        <p class="ps-3">${suggestion[1]}</p>
+                                                        <input type="button" class="${style_class}" value="${button_value}" id="${suggestion[0]}" ${disable_button}>
+                                                    </div>`
+                                listItem.classList.add('ps-0')
+                                searchResult.appendChild(listItem);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+    })
+
 </script>
 
 <script>
