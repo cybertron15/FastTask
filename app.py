@@ -289,14 +289,15 @@ def update_user_invites():
         data = json.loads(request.data)
         user = session['user_id']
         kick_user = request.args.get('kick_user')
-        if kick_user:
+        if kick_user == 'true':
             # making sure that the user owns the project before kicking anyone
             invite = InvitedProjects.query.filter_by(id=data['id'],project_owner_id=user).first()
         else:
             # making sure that the user is invited to the project
             invite = InvitedProjects.query.filter_by(id=data['id'],usr_id=user).first()
+            print('not kick')
         if invite:
-            if not kick_user and data['action'] == "accept":
+            if not (kick_user == 'true') and data['action'] == "accept":
                 invite.request_accepted = True
                 db.session.add(invite)
             if data['action'] == "reject":
