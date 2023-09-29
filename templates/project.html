@@ -50,26 +50,31 @@
                 <div class="card glass-effect theme-color-1" style="width: 15rem; min-height: 200px;">
                     <div class="card-body {{project.color}} rounded-2 d-flex flex-column">
                         <div class="d-flex justify-content-between">
-                            <h5 class="card-title " >{{project.project.title()}}</h5>
-                            <a href="/deleteProj/{{project.id}}"><img src="/static/trash.png" class="project_icon m-0 p-0" alt="" srcset=""></a>
+                            <h5 class="card-title ">{{project.project.title()}}</h5>
+                            <a href="/deleteProj/{{project.id}}"><img src="/static/trash.png"
+                                    class="project_icon m-0 p-0" alt="" srcset=""></a>
                         </div>
                         <p class="card-text">{{project.desc}}</p>
                         <div class="container-fluid mt-auto" id="bottom">
                             <hr>
                             <span class="card-text"><b>Due date:</b> <span class="">{{project.due_date}}</span></span>
-                           {% if project.status == 'Active' %}
-                                <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span> <div class="active-project"></div></span>
-                          {% else %}
-                          <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span> <div class="halt-project"></div></span>
-                          {% endif %}
-                            
+                            {% if project.status == 'Active' %}
+                            <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span>
+                                <div class="active-project"></div>
+                            </span>
+                            {% else %}
+                            <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span>
+                                <div class="halt-project"></div>
+                            </span>
+                            {% endif %}
+
                             <a href="/viewProject/{{project.id}}" class="btn mt-2 theme-button-1">Open</a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
-                <div class="card icon-box glass-effect theme-color-1" style="width: 15rem; min-height: 200px;" data-bs-toggle="modal"
-                    data-bs-target="#creatProjectModal">
+                <div class="card icon-box glass-effect theme-color-1" style="width: 15rem; min-height: 200px;"
+                    data-bs-toggle="modal" data-bs-target="#creatProjectModal">
                     <div class="card-body text-center">
                         <div class="d-flex h-100 align-items-center justify-content-center">
                             <img src="/static/plus.png" class="icon" class="user-select-none" alt="">
@@ -79,13 +84,42 @@
             </div>
         </div>
     </div>
-    <div class="row">
-    </div>
 </div>
 <div class="container mt-3">
     <h4 class="text-light">Invited Projects</h4>
     <hr>
     <div class="row">
+        <div class="col">
+            <div class="d-flex gap-2 flex-wrap">
+                {% for project in invited_projects %}
+                <div class="card glass-effect theme-color-1" style="width: 15rem; min-height: 200px;">
+                    <div class="card-body {{project.color}} rounded-2 d-flex flex-column">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title ">{{project.project.title()}}</h5>
+                            <a href="/deleteProj/{{project.id}}"><img src="/static/trash.png"
+                                    class="project_icon m-0 p-0" alt="" srcset=""></a>
+                        </div>
+                        <p class="card-text">{{project.desc}}</p>
+                        <div class="container-fluid mt-auto" id="bottom">
+                            <hr>
+                            <span class="card-text"><b>Due date:</b> <span class="">{{project.due_date}}</span></span>
+                            {% if project.status == 'Active' %}
+                            <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span>
+                                <div class="active-project"></div>
+                            </span>
+                            {% else %}
+                            <span class="card-text"><b> Project Status:</b> <span class="">{{project.status}}</span>
+                                <div class="halt-project"></div>
+                            </span>
+                            {% endif %}
+
+                            <a href="/viewProject/{{project.id}}" class="btn mt-2 theme-button-1">Open</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock body %}

@@ -28,7 +28,6 @@ def home():
         task.due_date = task.due_date.isoformat().split("T")[0]
     return render_template("index.html", tasks=tasks)
 
-
 @app.before_request
 def login_check():
     logged_in = session.get("logged_in")
@@ -40,25 +39,32 @@ def login_check():
                 return
         return redirect(url_for("login", signed_up=0))
 
-
 @app.route("/contact")
 def contact():
     return "palashdhavle15@gmail.com"
 
-
 @app.route("/projects")
 def show_projects():
-    projects = Projects.query.filter_by(usr_id=session["user_id"]).all()
-    for project in projects:
-        if 0 <= (project.due_date - datetime.datetime.now()).days < 1:
-            project.color = "theme-warning"
-        elif (project.due_date - datetime.datetime.now()).days < 0:
-            project.color = "theme-danger"
-        project.due_date = datetime.datetime.strftime(
-            project.due_date, "%Y-%m-%d %H:%M:%S"
-        ).split(" ")[0]
-    return render_template("project.html", projects=projects)
+    user_projects = Projects.query.filter_by(usr_id=session["user_id"]).all()
+    invited_projects = InvitedProjects.query.filter_by(usr_id=session["user_id"]).all()
+    invited_project_ids = [invited_project.project_id for invited_project in invited_projects]
+    invited_project_list = Projects.query.filter(Projects.id.in_(invited_project_ids)).all()
 
+    for pro in user_projects:
+        if 0 <= (pro.due_date - datetime.datetime.now()).days < 1:
+            pro.color = "theme-warning"
+        elif (pro.due_date - datetime.datetime.now()).days < 0:
+            pro.color = "theme-danger"
+        pro.due_date = datetime.datetime.strftime(pro.due_date, "%Y-%m-%d %H:%M:%S").split(" ")[0]
+
+    for pro in invited_project_list:
+        if 0 <= (pro.due_date - datetime.datetime.now()).days < 1:
+            pro.color = "theme-warning"
+        elif (pro.due_date - datetime.datetime.now()).days < 0:
+            pro.color = "theme-danger"
+        pro.due_date = datetime.datetime.strftime(pro.due_date, "%Y-%m-%d %H:%M:%S").split(" ")[0]
+    
+    return render_template("project.html", projects=user_projects,invited_projects=invited_project_list)
 
 @app.route("/delete/<int:id>")
 def delete(id):
@@ -66,7 +72,6 @@ def delete(id):
     db.session.delete(task)
     db.session.commit()
     return redirect("/")
-
 
 @app.route("/update/<int:id>", methods=["GET", "POST"])
 def update(id):
@@ -79,7 +84,6 @@ def update(id):
         return redirect("/")
     task = Tasks.query.filter_by(id=id).first()
     return render_template("update.html", task=task)
-
 
 @app.route("/add", methods=["GET", "POST"])
 def add_task():
@@ -95,7 +99,6 @@ def add_task():
     db.session.add(task)
     db.session.commit()
     return redirect("/")
-
 
 @app.route("/add-project", methods=["GET", "POST"])
 def add_project():
@@ -115,7 +118,6 @@ def add_project():
     db.session.commit()
     return redirect(f"/viewProject/{id}")
 
-
 @app.route("/deleteProj/<string:id>")
 def delete_proj(id):
     task = Projects.query.filter_by(id=id).first()
@@ -123,13 +125,15 @@ def delete_proj(id):
     db.session.commit()
     return redirect("/projects")
 
-
 @app.route("/viewProject/<string:id>")
 def view_project(id):
     project = Projects.query.filter_by(id=id, usr_id=session["user_id"]).first()
     # added for security reason if someone tries to check out other peoples project
     if not project:
-        return "You are not allowed to view this project"
+        invited_project = InvitedProjects.query.filter_by(project_id=id,usr_id=session["user_id"])
+        project = Projects.query.filter_by(id=id).first()
+        if not invited_project:
+            return "You are not allowed to view this project"
     user_name = session["user_name"].title()
     name = project.project
     status = project.status
@@ -150,7 +154,6 @@ def view_project(id):
         status=status,
     )
 
-
 @app.route("/add_Project_Task", methods=["GET", "POST"])
 def add_project_task():
     if request.method == "POST":
@@ -166,7 +169,6 @@ def add_project_task():
         db.session.commit()
         return "ok", 200
 
-
 @app.route("/remove_Project_Task", methods=["GET", "POST"])
 def remove_project_task():
     if request.method == "POST":
@@ -176,7 +178,6 @@ def remove_project_task():
         db.session.delete(task)
         db.session.commit()
         return "ok", 200
-
 
 @app.route("/update_Project_Task", methods=["GET", "POST"])
 def update_project_task():
@@ -188,7 +189,6 @@ def update_project_task():
         db.session.add(task)
         db.session.commit()
         return "ok", 200
-
 
 @app.route("/login/<int:signed_up>", methods=["GET", "POST"])
 def login(signed_up):
@@ -306,7 +306,6 @@ def update_user_invites():
             return jsonify('ok')
         else:
             return jsonify('request rejected')
-
 
 @app.route("/get_users_for_project",methods=["POST"])
 def users_for_project():
