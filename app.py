@@ -56,12 +56,22 @@ def show_projects():
             pro.color = "theme-danger"
         pro.due_date = datetime.datetime.strftime(pro.due_date, "%Y-%m-%d %H:%M:%S").split(" ")[0]
 
+        # shortening the description if its too long
+        if len(pro.desc) > 100:
+            pro.full_desc = pro.desc
+            pro.desc = pro.desc[:100] + "..."
+
     for pro in invited_project_list:
         if 0 <= (pro.due_date - datetime.datetime.now()).days < 1:
             pro.color = "theme-warning"
         elif (pro.due_date - datetime.datetime.now()).days < 0:
             pro.color = "theme-danger"
         pro.due_date = datetime.datetime.strftime(pro.due_date, "%Y-%m-%d %H:%M:%S").split(" ")[0]
+
+        # shortening the description if its too long
+        if len(pro.desc) > 100:
+            pro.full_desc = pro.desc
+            pro.desc = pro.desc[:100] + "..."
     
     return render_template("project.html", projects=user_projects,invited_projects=invited_project_list)
 
