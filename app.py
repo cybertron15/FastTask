@@ -45,7 +45,7 @@ def contact():
 @app.route("/projects")
 def show_projects():
     user_projects = Projects.query.filter_by(usr_id=session["user_id"]).all()
-    invited_projects = InvitedProjects.query.filter_by(usr_id=session["user_id"]).all()
+    invited_projects = InvitedProjects.query.filter_by(usr_id=session["user_id"],request_accepted=True).all()
     invited_project_ids = [invited_project.project_id for invited_project in invited_projects]
     invited_project_list = Projects.query.filter(Projects.id.in_(invited_project_ids)).all()
 
