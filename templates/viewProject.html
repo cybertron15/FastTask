@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between">
         <div>
             <div class="d-flex gap-2">
-                <h3 class="theme-title-4">{{projectName.title()}}</h3>
+                <h3 class="theme-title-4 mb-0">{{projectName.title()}}</h3>
                 <div class="dropdown">
                     <img src="/static/add-user.png" alt="" class="small-icon mt-2" data-bs-toggle="dropdown" id="invite-button"
                         data-bs-auto-close="outside">
@@ -26,7 +26,8 @@
                     </div>
                 </div>
             </div>
-            <h6>Due: {{due_date}}</h6>
+            <h6 class="mb-3">by {{owner_name}}</h6>
+            <h6 class="mb-0">Due: {{due_date}}</h6>
         </div>
         <div>
             <div style="margin-left: 37px;" class="mt-2">
@@ -46,7 +47,7 @@
     </div>
     <hr>
 </div>
-<div class="container mt-3">
+<div class="container mt-1">
     <div class="d-flex gap-2" id="main">
         <div class="container rounded-3 glass-effect theme-color-1" id="hts-c">
             <h6 class="fs-5 mt-2 text-light">Have to start</h6>

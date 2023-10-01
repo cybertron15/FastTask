@@ -14,7 +14,6 @@ db.init_app(app)
 
 whitelist = ["/static/", "/public/", "/login/"]
 
-
 @app.route("/")
 def home():
     tasks = Tasks.query.filter_by(usr_id=session["user_id"]).all()
@@ -134,6 +133,7 @@ def view_project(id):
         project = Projects.query.filter_by(id=id).first()
         if not invited_project:
             return "You are not allowed to view this project"
+    owner = Users.query.filter_by(id=project.usr_id).first()
     user_name = session["user_name"].title()
     name = project.project
     status = project.status
@@ -150,7 +150,7 @@ def view_project(id):
         hts_task=hts_task,
         woi_task=woi_task,
         c_task=c_task,
-        user_name=user_name,
+        owner_name=owner.usr_name,
         status=status,
     )
 
@@ -295,7 +295,6 @@ def update_user_invites():
         else:
             # making sure that the user is invited to the project
             invite = InvitedProjects.query.filter_by(id=data['id'],usr_id=user).first()
-            print('not kick')
         if invite:
             if not (kick_user == 'true') and data['action'] == "accept":
                 invite.request_accepted = True
