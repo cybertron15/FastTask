@@ -35,17 +35,17 @@ function get_invite_requests() {
         .then(invites => show_invites(invites))
 }
 
-function handle_invite_requests(ev){
-    if (ev.target && event.target.tagName == 'IMG') {
-        let action = ev.target.getAttribute('action-type')
-        let invite_id = ev.target.getAttribute('invite-id')
+function handle_invite_requests(event){
+    if (event.target && event.target.tagName == 'IMG') {
+        let action = event.target.getAttribute('action-type')
+        let invite_id = event.target.getAttribute('invite-id')
         fetch_options.body = JSON.stringify({ 'id': invite_id, 'action': action })
 
         fetch('http://127.0.0.1:5001/update_invites?kick_user=false', fetch_options)
             .then(response => response.json())
             .then(data => {
                 if (data == 'ok') {
-                    ev.target.parentElement.parentElement.parentElement.remove()
+                    event.target.parentElement.parentElement.parentElement.remove()
                 }
             })
     }
@@ -54,4 +54,4 @@ function handle_invite_requests(ev){
 invite_button.onclick = get_invite_requests
 
 // code to accept or reject the invite
-invite_table.addEventListener('click',handle_invite_requests(ev))
+invite_table.addEventListener('click',handle_invite_requests)
