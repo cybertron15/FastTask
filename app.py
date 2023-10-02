@@ -19,7 +19,7 @@ def home():
     tasks = Tasks.query.filter_by(usr_id=session["user_id"]).all()
     for task in tasks:
         if 0 <= (task.due_date - datetime.datetime.now()).days < 1:
-            task.color = "text-warning"
+            task.color = "text-light"
         elif (task.due_date - datetime.datetime.now()).days < 0:
             task.color = "text-danger"
 
