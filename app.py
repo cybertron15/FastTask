@@ -331,6 +331,10 @@ def users_for_project():
         else:
             return jsonify({"users":invited_users_list})
 
+@app.route("/tracker",methods=["GET"])
+def tracker():
+    return render_template('tracker.html')
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
